@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import json
+
+keys_path = '../../keys.txt'
+with open(keys_path, 'r', encoding='utf-8') as file:
+    keys = json.load(file)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'home',
     'accounts',
 ]
 
@@ -76,8 +82,12 @@ WSGI_APPLICATION = 'space_rental.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'database_design',
+        'USER': 'root',
+        'PASSWORD': keys['mysql_pw'],
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
