@@ -80,18 +80,17 @@ WSGI_APPLICATION = 'space_rental.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'database_design',
+        'NAME': 'dbdesign',
         'USER': 'root',
         'PASSWORD': keys['mysql_pw'],
         'HOST': 'localhost',
         'PORT': '3306',
     }
 }
-'''
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
