@@ -3,3 +3,12 @@
 {% else %}
 <p>You are not logged in.</p>
 {% endif %}
+
+<button
+  id="mypage-btn"
+  class="mypage-btn"
+  type="button"
+  onclick="document.location.href='{% url "my_page" %}'"
+>
+  마이페이지
+</button>
