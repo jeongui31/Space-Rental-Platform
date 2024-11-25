@@ -4,14 +4,17 @@ from django.contrib.auth.models import User as AuthUser
 from django.db import IntegrityError
 from django.utils.timezone import now
 from accounts.models import User, Host
+from django.db.models import ObjectDoesNotExist
 
-def login(request):
+
+def user_login(request):
     if request.method == 'POST':
-        email = request.POST.get('username')
-        password = request.POST.get('password')
-
+        email = request.POST.get('email', '').strip().lower()  # 공백 제거 및 소문자 변환
+        password = request.POST.get('password', '').strip()
+        
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email=email)  # 이메일로 사용자 검색
+            print(f"Debug: Found user = {user}")
             if user.password == password:  # 비밀번호 확인
                 auth_user = authenticate(username=email, password=password)
                 if not auth_user:
@@ -20,12 +23,13 @@ def login(request):
                 return redirect('/home/')  # 홈 페이지로 리디렉션
             else:
                 return render(request, 'login.html', {'error': '잘못된 비밀번호입니다.'})
-        except User.DoesNotExist:
+        except ObjectDoesNotExist:
+            print("Debug: User does not exist")
             return render(request, 'login.html', {'error': '존재하지 않는 사용자입니다.'})
 
     return render(request, 'login.html')
 
-def signup(request):
+def user_signup(request):
     if request.method == 'POST':
         # POST 데이터에서 값 가져오기
         user_name = request.POST.get('user_name')
