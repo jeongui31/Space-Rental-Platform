@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Space-Rental-Platform</title>
+        <link rel="stylesheet" href="assets/css/login_page.css">
+        <style>
+            .toggle-switch {
+                margin: 20px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .toggle-input {
+                display: none;
+            }
+            
+            .toggle-label {
+                position: relative;
+                display: block;
+                width: 40px;
+                height: 24px;
+                background-color: #ccc;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .toggle-label::before {
+                content: "";
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 20px;
+                height: 20px;
+                background-color: white;
+                border-radius: 50%;
+                transition: transform 0.3s ease;
+            }
+
+            .toggle-input:checked + .toggle-label {
+                 background-color: darkslateblue;
+            }
+            .toggle-input:checked + .toggle-label::before {
+                transform: translateX(16px);
+            }
+            .toggle-wrapper {
+                display: flex;
+                width: 330px;
+                height: 40px;
+                justify-content: space-between;
+                align-items: center;
+                border-radius: 6px;
+                background-color: #f8f8f8;
+                padding-left: 10px;
+                color: darkslateblue;
+                font-size: 14px;
+                font-weight: bold;
+                margin-bottom: 16px;
+            }
+            .host-info-wrapper {
+                display: block;
+                width: 320px;
+                height: 150px;
+                display: none;
+            }
+            .register-btn {
+                position: absolute;
+                bottom: 150px;
+                font-size: 16px;
+                font-family: 'Roboto', sans-serif;
+                color: white;
+                border: none;
+                background-color: darkslateblue;
+                width: 340px;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-bottom: 16px;
+            }
+
+            .register-btn:hover {
+                background-color: rgb(218, 218, 218);
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>SRP</h1>
+        </header>
+        <div class="body-wrapper">
+            <div class="login-wrapper">
+                <h2>Register</h2>
+                <form method="post" action="" id="login-form">
+                    <input type="email" name="email" placeholder="Email">
+                    <input type="password" name="password" placeholder="Password">
+                    <input type="text" name="user_name" placeholder="Name">
+                    <input type="tel" name="phone" placeholder="Phone Number">
+                    <div class="toggle-wrapper">
+                        <span id="toggle-status">Guest</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" class="toggle-input" id="toggle" />
+                            <label class="toggle-label" for="toggle"> </label>
+                        </div>
+                    </div>
+                    <div class="host-info-wrapper" id="host-info-wrapper">
+                        <input type="text" name="company_name" placeholder="Company Name">
+                        <input type="number" name="bussiness_license" placeholder="bussiness License">
+                    </div>
+                    <button id="register-btn" class="register-btn" type="button" onclick="document.location.href='main_page.html'">가입완료</button>
+                </form>
+            </div>
+        </div>
+        <script>
+            const toggleInput = document.getElementById('toggle');
+            const toggleState = document.getElementById('toggle-status');
+            const toggleHostInfo = document.getElementById('host-info-wrapper');
+
+            toggleInput.addEventListener('change', function(){
+                if (toggleInput.checked) {
+                    toggleState.textContent = 'Host';
+                    toggleHostInfo.style.display = 'block';
+                } else {
+                    toggleState.textContent = 'Guest';
+                    toggleHostInfo.style.display = 'none';
+                }
+            })
+        </script>
+    </body>
+</html>
