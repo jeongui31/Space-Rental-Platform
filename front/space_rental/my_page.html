@@ -62,13 +62,36 @@
                 height: 100%;
             }
 
+            .user-info .edit-info {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .edit-info > button {
+                font-size: 16px;
+                font-family: 'Roboto', sans-serif;
+                font-weight: bold;
+                color: white;
+                border: none;
+                background-color: darkslateblue;
+                width: 200px;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+
             .host-info > button {
                 font-size: 16px;
                 font-family: 'Roboto', sans-serif;
                 font-weight: bold;
                 color: white;
                 border: none;
-                background-color: slateblue;
+                background-color: darkslateblue;
                 width: 100px;
                 height: 30px;
                 display: flex;
@@ -76,6 +99,10 @@
                 align-items: center;
                 border-radius: 5px;
                 cursor: pointer;
+            }
+
+            .edit-info > button:hover, .host-info > button:hover {
+                background-color: slateblue;
             }
 
         </style>
@@ -98,13 +125,17 @@
                         <span id="phone_label">Phone Number</span>
                         <span id="phone">N/A</span>
                     </div>
+                    <div class="edit-info">
+                        <button id="space-regi-btn" class="space-regi-btn" type="button" onclick="document.location.href='edit_user_info_page.html'">회원 정보 수정
+                    </div>
                     <div class="guest-info" id="guest" style="display: none;">
                         <span id="phone_label">최근 예약 내역</span>
                         <!-- 예약한 내용 코드 추가해야함 -->
                     </div>
                     <div class="host-info" id="host" style="display: none;">
+                        <!-- 각 버튼에 맞는 페이지 구현 후 이동 경로 수정 -->
                         <button id="space-regi-btn" class="space-regi-btn" type="button" onclick="document.location.href='my_page.html'">장소 등록
-                        <button id="space-modify-btn" class="space-modify-btn" type="button" onclick="document.location.href='my_page.html'">장소 수정
+                        <button id="space-edit-btn" class="space-edit-btn" type="button" onclick="document.location.href='my_page.html'">장소 수정
                         <button id="book-manage-btn" class="book-manage-btn" type="button" onclick="document.location.href='my_page.html'">예약 처리
                     </div>
                 </div>
@@ -114,7 +145,7 @@
                 const user_name = "dongguk";
                 const email = "dongguk@gmail.com";
                 const phone = "010-1234-1234";
-                const role = "Guest";
+                const role = "Host";
                 document.getElementById("user_name").textContent = user_name;
                 document.getElementById("email").textContent = email;
                 document.getElementById("phone").textContent = phone;
