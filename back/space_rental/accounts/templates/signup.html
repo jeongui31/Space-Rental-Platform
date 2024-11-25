@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup</title>
+    <script>
+      function toggleHostFields() {
+        const role = document.getElementById("role").value;
+        const hostFields = document.getElementById("host-fields");
+        if (role === "host") {
+          hostFields.style.display = "block";
+        } else {
+          hostFields.style.display = "none";
+          // 비 Host일 경우 입력 값 초기화
+          document.getElementById("company_name").value = "";
+          document.getElementById("business_license").value = "";
+          document.getElementById("profile").value = "";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Signup</h1>
+    {% if error %}
+    <p style="color: red">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required /><br /><br />
+
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+      /><br /><br />
+
+      <label for="user_name">Name:</label>
+      <input type="text" id="user_name" name="user_name" required /><br /><br />
+
+      <label for="phone">Phone:</label>
+      <input type="text" id="phone" name="phone" required /><br /><br />
+
+      <label for="role">Role:</label>
+      <select id="role" name="role" onchange="toggleHostFields()" required>
+        <option value="user">User</option>
+        <option value="host">Host</option></select
+      ><br /><br />
+
+      <div id="host-fields" style="display: none">
+        <label for="company_name">Company Name:</label>
+        <input type="text" id="company_name" name="company_name" /><br /><br />
+
+        <label for="business_license">Business License:</label>
+        <input
+          type="text"
+          id="business_license"
+          name="business_license"
+        /><br /><br />
+      </div>
+
+      <button type="submit">Sign Up</button>
+    </form>
+  </body>
+</html>
