@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from home.models import Space, SpaceCategory, SpaceCategoryMapping
+from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories
 from accounts.models import User as CustomUser
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
@@ -56,7 +56,7 @@ def space_reg(request):
     auth_user = request.user
     try:
         user = CustomUser.objects.get(email=auth_user.username)
-        spaces = Space.objects.filter(user=user)  # 해당 사용자가 등록한 공간만 가져오기
+        spaces = SpaceWithCategories.objects.filter(user=user)  # 해당 사용자가 등록한 공간만 가져오기
     except CustomUser.DoesNotExist:
         spaces = []
 

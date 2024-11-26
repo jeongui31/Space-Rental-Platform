@@ -80,6 +80,7 @@
         하루 당 가격: {{ space.price_per_date }}원<br />
         등록일: {{ space.space_created_at|date:"Y-m-d H:i" }}<br />
         수정일: {{ space.space_updated_at|date:"Y-m-d H:i" }}<br />
+        카테고리: {{ space.categories|default:"없음" }}<br />
         <a href="{% url 'update_space' space.space_id %}">수정하기</a>
       </li>
       <hr />
