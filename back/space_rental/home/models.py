@@ -31,9 +31,10 @@ class SpaceCategory(models.Model):
 
 
 class SpaceCategoryMapping(models.Model):
+    mapping_id = models.AutoField(primary_key=True)
     space = models.ForeignKey(Space, on_delete=models.CASCADE)
     category = models.ForeignKey(SpaceCategory, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'space_category_mapping'
-        unique_together = ('space', 'category')
+
