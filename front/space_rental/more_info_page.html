@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Space-Rental-Platform</title>
+        <link rel="stylesheet" href="assets/css/style.css">
+        <style>
+            .body-wrapper {
+                font-size: 14px;
+                font-family: 'Roboto', sans-serif;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                align-items: flex-start;
+                margin: 0;
+                padding: 20px;
+            }
+            .image-wrapper {
+                width: 800px;
+                height: 600px;
+                padding: 40px;
+                border: 1px solid slateblue;
+                justify-content: center;
+                box-sizing: border-box;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                border-radius: 8px;
+                margin-bottom: 40px;
+            }
+            .space-name-wrapper {
+                display: flex;
+                border-left: 1px solid;
+                flex-direction: column;
+                padding: 10px;
+                padding-bottom: 0px;
+                margin-bottom: 10px;
+                width: 800px;
+                height: 100px;
+                font-size: 30px;
+                font-weight: bold;
+                text-align: left;
+            }
+
+            .booking-wrapper {
+                width: 400px;
+                height: 520px;
+                padding: 20px;
+                border: 1px solid slateblue;
+                justify-content: center;
+                box-sizing: border-box;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                border-radius: 8px;
+                margin-top: 120px;
+            }
+
+            .description {
+                width: 100%;
+                height: 200px;
+                margin-bottom: 16px;
+                border-radius: 6px;
+                background-color: #f1f1f1;
+            }
+            .booking-wrapper > div {
+                font-size: 20px;
+                text-align: left;
+                font-weight: bold;
+                color: darkslateblue;
+                margin-bottom: 10px;
+            }
+
+            .host-info-wrapper {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .host-info-wrapper > div{
+                font-size: 14px;
+                color: rgb(87, 87, 87);
+                text-align: end;
+            }
+
+            .review-wrapper {
+                display: flex;
+                flex-direction: column;
+                width: 740px;
+                height: 600px;
+                padding: 30px;
+                border-top: 1px solid rgb(87, 87, 87);
+                justify-content: start;
+            }
+
+            .review {
+                border: 1px solid #ccc;
+                border-radius: 7px;
+                display: flex;
+                flex-direction: column;
+                align-items: start;
+                padding: 10px;
+                margin-top: 40px;
+                font-size: 16px;
+            }
+
+            .stars {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .star {
+                font-size: 20px;
+                color: lightgray; /* 기본적으로 회색 */
+                margin-right: 4px;
+            }
+
+            .star.filled {
+                color: gold; /* 채워진 별은 금색 */
+            }
+
+            button {
+                font-size: 20px;
+                font-weight: bold;
+                font-family: 'Roboto', sans-serif;
+                color: white;
+                border: none;
+                background-color: darkslateblue;
+                width: 360px;
+                height: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 40px;
+            }
+
+            button:hover {
+                background-color: slateblue;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>SRP</h1>
+            <hr/>
+        </header>
+        <div class="body-wrapper">
+            <div class="leftside">
+                <div class="space-name-wrapper">
+                    <div class="space-name" id="space_name" style="margin-bottom: 10px;"></div> 
+                </div>
+                <div class="image-wrapper">
+                    사진
+                </div>
+                <div class="review-wrapper">
+                    <div class="review-avg" id="review_avg" style="font-weight: bold; font-size: 20px; text-align: start;"></div>
+                    <div class="review" id="review">
+                        <div class="review-user-id" id="review_user_id" style="font-weight: bold;"></div>
+                        <div class="rating-and-date" style="display: flex; flex-direction: row; font-size: 16px;">
+                            <div class="review-rating" id="review_rating"></div>
+                            <div class="review-create-at" id="review_create_at" style="padding: 8px;"></div>
+                        </div>
+                       <div class="comment" id="comment">리뷰 내용</div>
+                    </div>
+                </div>
+            </div>
+            <div class="rightside">
+                <div class="booking-wrapper">
+                    <div class="address" id="address"></div>
+                    <div class="capacity" id="capacity"></div>
+                    <div class="price-per-date" id="price_per_date"></div>
+                    <div class="description" id="description" style="font-size: 15px; color: black;">설명</div>
+                    <div class="host-info-wrapper">
+                        <div class="host-user-id" id="host_user_id"></div>
+                        <div class="space-create-at" id="space_create_at"></div>
+                        <div class="space-update-at" id="space_update_at"></div>
+                    </div>
+                    <button id="booking-btn" class="booking-btn" type="button" onclick="document.location.href='main_page.html'">예약하기</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const address = "서울 중구 필동로1길 30";
+            const space_name = "신공학관 4147";
+            const review_avg = 1.7;
+            const capacity = 40;
+            const price_per_date = 1000000;
+            const host_user_id = "dongguk"
+            const space_create_at = "20xx-01-01";
+            const space_update_at = "20xx-01-01";
+            const review_user_id = "alpha";
+            const review_rating = 3;
+            const review_create_at = "20xx-03-01";
+            
+
+            document.getElementById("address").textContent = address;
+            document.getElementById("space_name").textContent = space_name;
+            document.getElementById("review_avg").textContent = "평점 : " + review_avg;
+            document.getElementById("capacity").textContent = "총 수용인원 : " + capacity + "명";
+            document.getElementById("price_per_date").textContent = "대관비용 : " + price_per_date.toLocaleString('ko-KR') + "원";
+            document.getElementById("host_user_id").textContent = "소유자 : " + host_user_id;
+            document.getElementById("space_create_at").textContent = "등록일 : " + space_create_at;
+            document.getElementById("space_update_at").textContent = "마지막 업데이트 : " + space_update_at;
+            document.getElementById("review_user_id").textContent = review_user_id;
+            document.getElementById("review_create_at").textContent = review_create_at;
+
+
+            const ratingContainer = document.getElementById("review_rating");
+            const starsContainer = document.createElement("div");
+            starsContainer.classList.add("stars");
+
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement("span");
+                star.classList.add("star");
+                star.textContent = "★";
+                if (i <= review_rating) {
+                    star.classList.add("filled");
+                }
+                starsContainer.appendChild(star);
+            }
+
+            ratingContainer.appendChild(starsContainer);
+        </script>
+    </body>
+</html>
