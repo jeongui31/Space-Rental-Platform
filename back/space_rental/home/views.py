@@ -85,6 +85,7 @@ def update_space(request, space_id):
         address = request.POST.get('address')
         capacity = request.POST.get('capacity')
         price_per_date = request.POST.get('price_per_date')
+        category_ids = request.POST.getlist('category_name')  # 수정된 카테고리 ID 가져오기
 
         # 공간 정보 업데이트
         space.space_name = space_name
@@ -94,7 +95,23 @@ def update_space(request, space_id):
         space.price_per_date = int(price_per_date)
         space.save()
 
+        # 기존 카테고리 매핑 삭제 및 새로운 매핑 추가
+        SpaceCategoryMapping.objects.filter(space=space).delete()
+        for category_id in category_ids:
+            try:
+                category = SpaceCategory.objects.get(category_id=category_id)
+                SpaceCategoryMapping.objects.create(space=space, category=category)
+            except SpaceCategory.DoesNotExist:
+                continue
+
         return redirect('space_reg')  # 수정 완료 후 마이페이지로 리디렉션
 
     # GET 요청: 공간 정보 수정 폼 표시
-    return render(request, 'update_space.html', {'space': space})
+    all_categories = SpaceCategory.objects.all()
+    selected_categories = SpaceCategoryMapping.objects.filter(space=space).values_list('category_id', flat=True)
+
+    return render(
+        request,
+        'update_space.html',
+        {'space': space, 'all_categories': all_categories, 'selected_categories': list(selected_categories)},
+    )
