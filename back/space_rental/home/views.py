@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from home.models import Space, SpaceCategory, SpaceCategoryMapping
 from accounts.models import User as CustomUser
 from django.utils.timezone import now
@@ -64,3 +64,37 @@ def space_reg(request):
     categories = SpaceCategory.objects.all()
 
     return render(request, 'space_reg.html', {'spaces': spaces, 'categories': categories})
+
+@login_required
+def update_space(request, space_id):
+    space = get_object_or_404(Space, pk=space_id)
+
+    auth_user = request.user
+    try:
+        user = CustomUser.objects.get(email=auth_user.username)
+    except CustomUser.DoesNotExist:
+        return redirect('my_page')
+
+    if space.user != user:
+        return redirect('my_page')  # 권한이 없으면 마이페이지로 리디렉션
+
+    if request.method == 'POST':
+        # 폼 데이터 가져오기
+        space_name = request.POST.get('space_name')
+        description = request.POST.get('description', '')
+        address = request.POST.get('address')
+        capacity = request.POST.get('capacity')
+        price_per_date = request.POST.get('price_per_date')
+
+        # 공간 정보 업데이트
+        space.space_name = space_name
+        space.description = description
+        space.address = address
+        space.capacity = int(capacity)
+        space.price_per_date = int(price_per_date)
+        space.save()
+
+        return redirect('space_reg')  # 수정 완료 후 마이페이지로 리디렉션
+
+    # GET 요청: 공간 정보 수정 폼 표시
+    return render(request, 'update_space.html', {'space': space})

@@ -3,12 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>마이페이지</title>
+    <title>공간 수정</title>
   </head>
   <body>
-    <h1>마이페이지</h1>
+    <h1>공간 수정</h1>
 
-    <h2>공간 등록</h2>
     <form method="post">
       {% csrf_token %}
       <label for="space_name">공간 이름:</label>
@@ -16,26 +15,30 @@
         type="text"
         id="space_name"
         name="space_name"
+        value="{{ space.space_name }}"
         required
       /><br /><br />
 
       <label for="description">설명:</label>
-      <textarea
-        id="description"
-        name="description"
-        rows="4"
-        cols="50"
-      ></textarea
+      <textarea id="description" name="description" rows="4" cols="50">
+{{ space.description }}</textarea
       ><br /><br />
 
       <label for="address">주소:</label>
-      <input type="text" id="address" name="address" required /><br /><br />
+      <input
+        type="text"
+        id="address"
+        name="address"
+        value="{{ space.address }}"
+        required
+      /><br /><br />
 
       <label for="capacity">수용 인원:</label>
       <input
         type="number"
         id="capacity"
         name="capacity"
+        value="{{ space.capacity }}"
         min="0"
         required
       /><br /><br />
@@ -45,19 +48,28 @@
         type="number"
         id="price_per_date"
         name="price_per_date"
+        value="{{ space.price_per_date }}"
         min="0"
         required
       /><br /><br />
 
-      <h2>카테고리 선택</h2>
-      <p>하나 이상의 카테고리를 선택하세요:</p>
+      <h2>카테고리 수정</h2>
+      <p>현재 카테고리:</p>
       <div>
-        {% for category in categories %}
+        {% for category in all_categories %}
         <input
           type="checkbox"
           id="category_{{ category.category_id }}"
-          name="category_name"
+          name="category_ids"
           value="{{ category.category_id }}"
+          {%
+          if
+          category
+          in
+          space.categories.all
+          %}checked{%
+          endif
+          %}
         />
         <label for="category_{{ category.category_id }}"
           >{{ category.category_name }}</label
@@ -65,27 +77,8 @@
         {% endfor %}
       </div>
       <br />
-
-      <button type="submit">등록</button>
+      <button type="submit">수정하기</button>
     </form>
-
-    <h2>내가 등록한 공간</h2>
-    <ul>
-      {% for space in spaces %}
-      <li>
-        <strong>{{ space.space_name }}</strong><br />
-        설명: {{ space.description|default:"없음" }}<br />
-        주소: {{ space.address }}<br />
-        수용 인원: {{ space.capacity }}명<br />
-        하루 당 가격: {{ space.price_per_date }}원<br />
-        등록일: {{ space.space_created_at|date:"Y-m-d H:i" }}<br />
-        수정일: {{ space.space_updated_at|date:"Y-m-d H:i" }}<br />
-        <a href="{% url 'update_space' space.space_id %}">수정하기</a>
-      </li>
-      <hr />
-      {% empty %}
-      <p>등록된 공간이 없습니다.</p>
-      {% endfor %}
-    </ul>
+    <a href="{% url 'space_reg' %}">돌아가기</a>
   </body>
 </html>
