@@ -2,5 +2,18 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../2023-2-regression-analysis" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../2024-1-Multivariate-TimeSeries-data-analysis" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../2024-1-OSS-team-4-SilverTech" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../2024-1-SilverTech" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../2024-1-machine-learning" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../2024-2-Introduction-to-DeepLearning" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../2024-2-Space-Rental-Platform" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../3-1_YOLOv8" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../Algorithm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../TALLRec" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../YOLO-based-Brain-Tumor-Detection-and-MGMT-Promoter-Methylation-Prediction" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../easyread-judgment-transducer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../easyread-judgment-transducer/FlagEmbedding" vcs="Git" />
   </component>
 </project>

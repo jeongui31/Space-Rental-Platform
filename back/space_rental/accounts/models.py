@@ -12,7 +12,7 @@ class User(models.Model):
     user_updated_at = models.DateTimeField(default=now)
     
     class Meta:
-        managed = False
+        managed = True
         db_table = 'User'
         
 class Host(models.Model):
@@ -37,5 +37,5 @@ class Host(models.Model):
     )
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'host'
