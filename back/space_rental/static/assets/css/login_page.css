@@ -32,7 +32,7 @@ body {
 
 .login-wrapper{
     width: 400px;
-    height: 600px;
+    height: 400px;
     padding: 40px;
     justify-content: center;
     box-sizing: border-box;
@@ -46,7 +46,7 @@ body {
     margin-bottom: 20px;
 }
 
-#login-form > input, #host-info-wrapper > input{
+#login-form > div > input, #host-info-wrapper > div > input{
     width: 100%;
     height: 40px;
     padding: 0 10px;
@@ -55,7 +55,7 @@ body {
     background-color: #f8f8f8;
 }
 
-#login-form > input::placeholder, #host-info-wrapper > input::placeholder{
+#login-form > div >input::placeholder, #host-info-wrapper > div > input::placeholder{
     color: #D2D2D2;
 }
 
