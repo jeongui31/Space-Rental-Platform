@@ -5,3 +5,17 @@ body {
     color: #333;
     text-align: center;
 }
+
+h1 {
+    color: darkslateblue;
+    font-size: 30px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+hr {
+    width: 97%;
+    height: 1px;
+    background-color: darkslateblue;
+}
