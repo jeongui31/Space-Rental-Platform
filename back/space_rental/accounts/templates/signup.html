@@ -26,8 +26,6 @@
         display: none;
         flex-direction: column;
         width: 320px;
-        padding: 10px;
-        background-color: #f8f8f8;
         border-radius: 6px;
         margin-bottom: 16px;
       }
@@ -58,7 +56,7 @@
         const role = document.getElementById("role").value;
         const hostFields = document.getElementById("host-info-wrapper");
         if (role === "host") {
-          hostFields.style.display = "flex";
+          hostFields.style.display = "block";
         } else {
           hostFields.style.display = "none";
           // 비 Host일 경우 입력 값 초기화
@@ -73,12 +71,12 @@
       <h1>SRP</h1>
     </header>
     <div class="body-wrapper">
-      <div class="login-wrapper">
+      <div class="signup-wrapper">
         <h2>Register</h2>
         {% if error %}
         <p style="color: red">{{ error }}</p>
         {% endif %}
-        <form method="post" action="" id="login-form">
+        <form method="post" action="" id="signup-form">
           {% csrf_token %}
           <input type="email" name="email" placeholder="Email" required />
           <input
