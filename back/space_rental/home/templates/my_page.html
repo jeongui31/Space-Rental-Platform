@@ -1,72 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>마이페이지</title>
-  </head>
-  <body>
-    <h1>마이페이지</h1>
-
-    <h2>공간 등록</h2>
-    <form method="post">
-      {% csrf_token %}
-      <label for="space_name">공간 이름:</label>
-      <input
-        type="text"
-        id="space_name"
-        name="space_name"
-        required
-      /><br /><br />
-
-      <label for="description">설명:</label>
-      <textarea
-        id="description"
-        name="description"
-        rows="4"
-        cols="50"
-      ></textarea
-      ><br /><br />
-
-      <label for="address">주소:</label>
-      <input type="text" id="address" name="address" required /><br /><br />
-
-      <label for="capacity">수용 인원:</label>
-      <input
-        type="number"
-        id="capacity"
-        name="capacity"
-        min="0"
-        required
-      /><br /><br />
-
-      <label for="price_per_date">하루 당 가격:</label>
-      <input
-        type="number"
-        id="price_per_date"
-        name="price_per_date"
-        min="0"
-        required
-      /><br /><br />
-
-      <button type="submit">등록</button>
-    </form>
-
-    <h2>내가 등록한 공간</h2>
-    <ul>
-      {% for space in spaces %}
-      <li>
-        <strong>{{ space.space_name }}</strong><br />
-        설명: {{ space.description|default:"없음" }}<br />
-        주소: {{ space.address }}<br />
-        수용 인원: {{ space.capacity }}명<br />
-        하루 당 가격: {{ space.price_per_date }}원<br />
-        등록일: {{ space.space_created_at|date:"Y-m-d H:i" }}<br />
-      </li>
-      <hr />
-      {% empty %}
-      <p>등록된 공간이 없습니다.</p>
-      {% endfor %}
-    </ul>
-  </body>
+<h1>마이페이지</h1>
+<button
+id="mypage-btn"
+class="mypage-btn"
+type="button"
+onclick="document.location.href='{% url "space_reg" %}'"
+>
+공간 등록
+</button>
 </html>

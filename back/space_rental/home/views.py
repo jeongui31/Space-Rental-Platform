@@ -10,6 +10,10 @@ def home(request):
 
 @login_required
 def my_page(request):
+    return render(request, 'my_page.html')
+
+@login_required
+def space_reg(request):
     if request.method == 'POST':
         # 폼 데이터 가져오기
         space_name = request.POST.get('space_name')
@@ -36,7 +40,7 @@ def my_page(request):
         )
         space.save()
 
-        return redirect('my_page')  # 등록 후 마이페이지로 리디렉션
+        return redirect('space_reg')  # 등록 후 마이페이지로 리디렉션
 
     # GET 요청: 로그인한 사용자가 등록한 공간 가져오기
     auth_user = request.user
@@ -46,4 +50,4 @@ def my_page(request):
     except CustomUser.DoesNotExist:
         spaces = []
 
-    return render(request, 'my_page.html', {'spaces': spaces})
+    return render(request, 'space_reg.html', {'spaces': spaces})
