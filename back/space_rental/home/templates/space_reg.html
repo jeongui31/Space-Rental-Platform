@@ -49,13 +49,22 @@
         required
       /><br /><br />
 
-      <label for="category_name">카테고리 이름:</label>
-      <select id="category_name" name="category_name" required>
-        <option value="파티룸">파티룸</option>
-        <option value="팝업 스토어">팝업 스토어</option>
-        <option value="촬영 공간">촬영 공간</option>
-        <option value="공유오피스">공유오피스</option></select
-      ><br /><br />
+      <h2>카테고리 선택</h2>
+      <p>하나 이상의 카테고리를 선택하세요:</p>
+      <div>
+        {% for category in categories %}
+        <input
+          type="checkbox"
+          id="category_{{ category.category_id }}"
+          name="category_name"
+          value="{{ category.category_id }}"
+        />
+        <label for="category_{{ category.category_id }}"
+          >{{ category.category_name }}</label
+        ><br />
+        {% endfor %}
+      </div>
+      <br />
 
       <button type="submit">등록</button>
     </form>

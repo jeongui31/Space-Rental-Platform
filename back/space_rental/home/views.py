@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from home.models import Space
+from home.models import Space, SpaceCategory, SpaceCategoryMapping
 from accounts.models import User as CustomUser
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
@@ -21,11 +21,12 @@ def space_reg(request):
         address = request.POST.get('address')
         capacity = request.POST.get('capacity')
         price_per_date = request.POST.get('price_per_date')
+        category_ids = request.POST.getlist('category_name')  # 체크된 모든 카테고리 ID 가져오기
 
         # 현재 로그인한 사용자 가져오기
-        auth_user = request.user  # Django 기본 User 객체
+        auth_user = request.user
         try:
-            user = CustomUser.objects.get(email=auth_user.username)  # 이메일로 커스텀 User 객체 찾기
+            user = CustomUser.objects.get(email=auth_user.username)
         except CustomUser.DoesNotExist:
             return render(request, 'my_page.html', {'error': '사용자를 찾을 수 없습니다.'})
 
@@ -36,11 +37,20 @@ def space_reg(request):
             address=address,
             capacity=int(capacity),
             price_per_date=int(price_per_date),
-            user=user,  # 외래 키
+            user=user,
         )
         space.save()
 
-        return redirect('space_reg')  # 등록 후 마이페이지로 리디렉션
+        # SpaceCategoryMapping 생성
+        for category_id in category_ids:
+            try:
+                category = SpaceCategory.objects.get(category_id=category_id)
+                mapping = SpaceCategoryMapping(space=space, category=category)
+                mapping.save()
+            except SpaceCategory.DoesNotExist:
+                continue  # 유효하지 않은 카테고리는 무시
+
+        return redirect('space_reg')  # 등록 후 다시 공간 등록 페이지로 리디렉션
 
     # GET 요청: 로그인한 사용자가 등록한 공간 가져오기
     auth_user = request.user
@@ -50,4 +60,7 @@ def space_reg(request):
     except CustomUser.DoesNotExist:
         spaces = []
 
-    return render(request, 'space_reg.html', {'spaces': spaces})
+    # 모든 카테고리 가져오기
+    categories = SpaceCategory.objects.all()
+
+    return render(request, 'space_reg.html', {'spaces': spaces, 'categories': categories})

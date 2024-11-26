@@ -18,3 +18,22 @@ class Space(models.Model):
 
     def __str__(self):
         return self.space_name
+
+class SpaceCategory(models.Model):
+    category_id = models.AutoField(primary_key=True)
+    category_name = models.CharField(max_length=30, unique=True, null=False)
+
+    class Meta:
+        db_table = 'space_category'
+
+    def __str__(self):
+        return self.category_name
+
+
+class SpaceCategoryMapping(models.Model):
+    space = models.ForeignKey(Space, on_delete=models.CASCADE)
+    category = models.ForeignKey(SpaceCategory, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'space_category_mapping'
+        unique_together = ('space', 'category')
