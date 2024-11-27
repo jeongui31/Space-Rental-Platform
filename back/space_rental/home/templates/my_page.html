@@ -58,7 +58,7 @@
       .edit-info > button:hover {
         background-color: slateblue;
       }
-      .host-info > button {
+      .host-info-btn > button {
         font-size: 16px;
         font-family: "Roboto", sans-serif;
         font-weight: bold;
@@ -74,7 +74,7 @@
         border-radius: 5px;
         cursor: pointer;
       }
-      .host-info > button:hover {
+      .host-info-btn > button:hover {
         background-color: slateblue;
       }
     </style>
@@ -102,7 +102,7 @@
           <span><strong>역할:</strong></span>
           <span>{{ user.role }}</span>
         </div>
-        <div class="edit-info">
+        <div class="edit-info" style="justify-content: center;">
           <button
             type="button"
             onclick="document.location.href='{% url 'edit_user_info' %}'"
@@ -128,7 +128,8 @@
       {% elif user.role == "host" %}
       <div class="host-info">
         <h3>호스트 관리</h3>
-        <button
+        <div class="host-info-btn" style=" display: flex; justify-content: space-between; flex-direction: row;">
+          <button
           type="button"
           onclick="document.location.href='{% url 'space_reg' %}'"
         >
@@ -140,6 +141,7 @@
         >
           예약 처리
         </button>
+        </div>
       </div>
 
       {% else %}
