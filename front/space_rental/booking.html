@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Space-Rental-Platform</title>
+        <link rel="stylesheet" href="assets/css/style.css">
+        <style>
+            .body-wrapper {
+                font-size: 14px;
+                font-family: 'Roboto', sans-serif;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                align-items: flex-start;
+                margin: 0;
+                padding: 20px;
+            }
+            .image-wrapper {
+                width: 800px;
+                height: 600px;
+                padding: 40px;
+                border: 1px solid slateblue;
+                justify-content: center;
+                box-sizing: border-box;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                border-radius: 8px;
+                margin-bottom: 40px;
+            }
+            .space-name-wrapper {
+                display: flex;
+                border-left: 1px solid;
+                flex-direction: column;
+                padding: 10px;
+                padding-bottom: 0px;
+                margin-bottom: 10px;
+                width: 800px;
+                height: 100px;
+                font-size: 30px;
+                font-weight: bold;
+                text-align: left;
+            }
+
+            .booking-wrapper {
+                width: 400px;
+                height: 520px;
+                padding: 20px;
+                border: 1px solid slateblue;
+                justify-content: center;
+                box-sizing: border-box;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                border-radius: 8px;
+                margin-top: 120px;
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+            }
+
+            .booking-wrapper > label, .booking-wrapper > span {
+                font-size: 20px;
+                text-align: left;
+                font-weight: bold;
+                color: darkslateblue;
+                margin-bottom: 10px;
+            }
+
+            .booking-wrapper > input {
+                margin-bottom: 10px;
+                display: block;
+                font-size: 18px;
+                font-weight: bold;
+                
+            }
+            .review-wrapper {
+                display: flex;
+                flex-direction: column;
+                width: 740px;
+                height: 600px;
+                padding: 30px;
+                border-top: 1px solid rgb(87, 87, 87);
+                justify-content: start;
+            }
+
+            .review {
+                border: 1px solid #ccc;
+                border-radius: 7px;
+                display: flex;
+                flex-direction: column;
+                align-items: start;
+                padding: 10px;
+                margin-top: 40px;
+                font-size: 16px;
+            }
+
+            .stars {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .star {
+                font-size: 20px;
+                color: lightgray; /* 기본적으로 회색 */
+                margin-right: 4px;
+            }
+
+            .star.filled {
+                color: gold; /* 채워진 별은 금색 */
+            }
+
+            button {
+                font-size: 20px;
+                font-weight: bold;
+                font-family: 'Roboto', sans-serif;
+                color: white;
+                border: none;
+                background-color: darkslateblue;
+                width: 360px;
+                height: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 40px;
+            }
+
+            button:hover {
+                background-color: slateblue;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>SRP</h1>
+            <hr/>
+        </header>
+        <div class="body-wrapper">
+            <div class="leftside">
+                <div class="space-name-wrapper">
+                    <div class="space-name" id="space_name" style="margin-bottom: 10px;"></div> 
+                </div>
+                <div class="image-wrapper">
+                    사진
+                </div>
+                <div class="review-wrapper">
+                    <div class="review-avg" id="review_avg" style="font-weight: bold; font-size: 20px; text-align: start;"></div>
+                    <div class="review" id="review">
+                        <div class="review-user-id" id="review_user_id" style="font-weight: bold;"></div>
+                        <div class="rating-and-date" style="display: flex; flex-direction: row; font-size: 16px;">
+                            <div class="review-rating" id="review_rating"></div>
+                            <div class="review-create-at" id="review_create_at" style="padding: 8px;"></div>
+                        </div>
+                       <div class="comment" id="comment">리뷰 내용</div>
+                    </div>
+                </div>
+            </div>
+            <div class="rightside">
+                <div class="booking-wrapper">
+                    <label for="start_date">대여 시작 날짜 </label>
+                    <input 
+                        type="date"
+                        id="start_date"
+                        max=""
+                        min=""
+                        value=""
+                    />
+
+                    <label for="start_date">대여 종료 날짜 </label>
+                    <input 
+                        type="date"
+                        id="end_date"
+                        max=""
+                        min=""
+                        value="start_date"
+                    />
+                    <span>결제 방식</span>
+                    <div id="payment_methods" style="display: flex; flex-direction: row; margin-bottom: 50px;">
+                        <input 
+                            type="radio"
+                            id="Credit Card"
+                            name="payment_method"
+                            value="credit_card"
+                            style="margin-bottom: 5px;"
+                            />
+                        <label
+                            for="Credit Card"
+                            style="margin-right: 15px; font-size: 16px; color: darkslateblue; font-weight: bold;">
+                            Credit Card
+                        </label>
+                        <input 
+                            type="radio"
+                            id="Debit Card"
+                            name="payment_method"
+                            value="Debit Card"
+                            style="margin-bottom: 5px;"
+                            />
+                        <label
+                            for="Debit Card"
+                            style="margin-right: 15px; font-size: 16px; color: darkslateblue; font-weight: bold">
+                            Debit Card
+                        </label>
+                        <input 
+                            type="radio"
+                            id="Bank Transfer"
+                            name="payment_method"
+                            value="Bank Transfer"
+                            style="margin-bottom: 5px;"
+                            />
+                        <label
+                            for="Bank Transfer"
+                            style="margin-right: 15px; font-size: 16px; color: darkslateblue; font-weight: bold">
+                            Bank Transfer
+                        </label>
+                        <input 
+                            type="radio"
+                            id="Mobile Payment"
+                            name="payment_method"
+                            value="Mobile Payment"
+                            style="margin-bottom: 5px;"
+                            />
+                        <label
+                            for="Mobile Payment"
+                            style="margin-right: 15px; font-size: 16px; color: darkslateblue; font-weight: bold">
+                            Mobile Payment
+                        </label>
+                    </div>
+                    <span>총 결제 금액 :</span>
+                    <div id="amount" style="font-size: 24px; font-weight: bold; color: darkslateblue; align-self: end; display: block;"></div>
+                    <button id="booking-btn" class="booking-btn" type="button" onclick="document.location.href='main_page.html'">결제하기</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const space_name = "신공학관 4147";
+            const review_avg = 1.7;
+            const price_per_date = 1000000;
+
+            const review_user_id = "alpha";
+            const review_rating = 3;
+            const review_create_at = "20xx-03-01";
+            
+            const today = new Date();
+            const oneMonthLater = new Date();
+            oneMonthLater.setMonth(today.getMonth() + 1);
+
+            document.getElementById("amount").textContent = price_per_date.toLocaleString("ko-KR") + "원";
+            document.getElementById("space_name").textContent = space_name;
+            document.getElementById("review_user_id").textContent = review_user_id;
+            document.getElementById("review_create_at").textContent = review_create_at;
+            document.getElementById("review_avg").textContent = "평점 : " + review_avg;
+            document.getElementById("start_date").value = today.toISOString().substring(0, 10);
+            document.getElementById("start_date").min = today.toISOString().substring(0, 10);
+            document.getElementById("start_date").max = oneMonthLater.toISOString().substring(0, 10);
+            document.getElementById("end_date").value = today.toISOString().substring(0, 10);
+            document.getElementById("end_date").min = today.toISOString().substring(0, 10);
+            document.getElementById("end_date").max = oneMonthLater.toISOString().substring(0, 10);
+
+            document.getElementById("start_date").addEventListener("change", function() {
+                const startDateValue = this.value;
+                const endDateInput = document.getElementById("end_date");
+                const temp = new Date(startDateValue);
+                const endMax = new Date(startDateValue);
+
+                endDateInput.min = startDateValue;
+                endDateInput.value = startDateValue;
+                endMax.setDate(temp.getDate() + 6);
+                endDateInput.max  = endMax.toISOString().substring(0, 10);
+
+                calculateAmount();
+            });
+
+            document.getElementById("end_date").addEventListener("change", function() {
+                calculateAmount();
+            });
+
+            const ratingContainer = document.getElementById("review_rating");
+            const starsContainer = document.createElement("div");
+            starsContainer.classList.add("stars");
+
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement("span");
+                star.classList.add("star");
+                star.textContent = "★";
+                if (i <= review_rating) {
+                    star.classList.add("filled");
+                }
+                starsContainer.appendChild(star);
+            }
+
+            function calculateAmount() {
+                const startDateValue = document.getElementById("start_date").value;
+                const endDateValue = document.getElementById("end_date").value;
+
+                if (startDateValue && endDateValue) {
+                    const startDate = new Date(startDateValue);
+                    const endDate = new Date(endDateValue);
+
+                    const differenceInTime = endDate - startDate + 1;
+                    const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24)); // 하루(밀리초 단위)로 나눔
+
+                    const totalPrice = differenceInDays * price_per_date;
+                    document.getElementById("amount").textContent = `총 가격: ${totalPrice.toLocaleString('ko-KR')}원`;
+
+                }
+            }
+
+            ratingContainer.appendChild(starsContainer);
+        </script>
+    </body>
+</html>
