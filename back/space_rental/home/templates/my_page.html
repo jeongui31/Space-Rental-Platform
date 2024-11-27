@@ -5,8 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Page</title>
     <style>
+      header {
+        position: relative;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 20px;
+      }
+
       body {
+        margin: 0;
         font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        text-align: center;
       }
       h1 {
         color: darkslateblue;
@@ -81,9 +93,10 @@
   </head>
   <body>
     <header>
-      <h1>SRP</h1>
-      <hr />
+      <h1 style="position: absolute; left: 50%; transform: translateX(-50%);">SRP</h1>
+      <a href="{% url 'home' %}" style=" padding: 20px; border-right: 1px solid darkslateblue;">홈으로 돌아가기</a>
     </header>
+    <hr />
     <div class="mypage-wrapper">
       <div class="user-info">
         <div>
@@ -127,7 +140,7 @@
       </div>
       {% elif user.role == "host" %}
       <div class="host-info">
-        <h3>호스트 관리</h3>
+        <h3 style="text-align: start;">호스트 관리</h3>
         <div class="host-info-btn" style=" display: flex; justify-content: space-between; flex-direction: row;">
           <button
           type="button"
