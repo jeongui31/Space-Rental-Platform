@@ -183,10 +183,10 @@
       <div class="rightside">
         <div class="booking-wrapper">
           <label for="start_date">대여 시작 날짜 </label>
-          <input type="date" id="start_date" max="" min="" value="" />
+          <input type="date" id="start_date" min="{{ today|date:'Y-m-d' }}" />
 
           <label for="start_date">대여 종료 날짜 </label>
-          <input type="date" id="end_date" max="" min="" value="start_date" />
+          <input type="date" id="end_date" min="{{ today|date:'Y-m-d' }}" />
           <span>결제 방식</span>
           <div
             id="payment_methods"
@@ -276,14 +276,51 @@
               display: block;
             "
           ></div>
-          <button
-            id="booking-btn"
-            class="booking-btn"
-            type="button"
-            onclick="document.location.href='main_page.html'"
-          >
-            결제하기
-          </button>
+          <button id="booking-btn" onclick="submitBooking()">결제하기</button>
+
+          <script>
+            function submitBooking() {
+              const startDate = document.getElementById("start_date").value;
+              const endDate = document.getElementById("end_date").value;
+              const paymentMethod = document.querySelector(
+                'input[name="payment_method"]:checked'
+              )?.value;
+
+              if (!startDate || !endDate || !paymentMethod) {
+                alert("모든 필드를 입력하세요.");
+                return;
+              }
+
+              fetch("{% url 'booking' space.space_id %}", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: JSON.stringify({
+                  start_date: startDate,
+                  end_date: endDate,
+                  payment_method: paymentMethod,
+                }),
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    return response.text().then((text) => {
+                      console.error("Response error:", text);
+                      throw new Error("서버 오류: " + text);
+                    });
+                  }
+                  return response.json();
+                })
+                .then((data) => {
+                  alert(data.message || "예약이 완료되었습니다!");
+                  window.location.href = "{% url 'my_page' %}";
+                })
+                .catch((error) => {
+                  alert(error.message);
+                });
+            }
+          </script>
         </div>
       </div>
     </div>

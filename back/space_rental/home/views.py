@@ -172,6 +172,9 @@ def update_space(request, space_id):
         {'space': space, 'all_categories': all_categories, 'selected_categories': list(selected_categories)},
     )
 
+
+from datetime import date
+
 @login_required
 def booking_management(request):
     auth_user = request.user
@@ -256,13 +259,42 @@ def space_detail(request, space_id):
     }
     return render(request, 'space_detail.html', context)
 
+from django.http import JsonResponse
+from home.models import Booking  # Booking 모델 임포트
+import json
+
 @login_required
 def booking(request, space_id):
     space = get_object_or_404(Space, pk=space_id)
-    reviews = []  # 필요에 따라 리뷰 데이터를 추가
+    if request.method == 'GET':
+        today = date.today()
+        return render(request, 'booking.html', {'space': space, 'today': today})
+    elif request.method == 'POST':
+        data = json.loads(request.body)
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+        payment_method = data.get('payment_method')
 
-    context = {
-        'space': space,
-        'reviews': reviews,
-    }
-    return render(request, 'booking.html', context)
+        if not start_date or not end_date:
+            return JsonResponse({'error': '날짜를 모두 입력하세요.'}, status=400)
+
+        if end_date <= start_date:
+            return JsonResponse({'error': '종료 날짜는 시작 날짜 이후여야 합니다.'}, status=400)
+
+        # 예약 저장
+        try:
+            user = CustomUser.objects.get(email=request.user.username)
+        except CustomUser.DoesNotExist:
+            return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=400)
+
+        booking = Booking.objects.create(
+            user=user,
+            space=space,
+            start_date=start_date,
+            end_date=end_date,
+            booking_status='Pending',
+        )
+
+        return JsonResponse({'message': '예약이 완료되었습니다!', 'booking_id': booking.booking_id})
+
+    return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=405)
