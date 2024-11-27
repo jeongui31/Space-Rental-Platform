@@ -214,7 +214,12 @@
               마지막 업데이트: {{ space.space_updated_at }}
             </div>
           </div>
-          <button id="booking-btn" class="booking-btn" type="button">
+          <button
+            id="booking-btn"
+            class="booking-btn"
+            type="button"
+            onclick="location.href='{% url 'booking' space.space_id %}'"
+          >
             예약하기
           </button>
         </div>

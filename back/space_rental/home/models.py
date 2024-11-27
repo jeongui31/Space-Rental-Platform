@@ -54,3 +54,22 @@ class SpaceWithCategories(models.Model):
     class Meta:
         managed = False  # Django가 데이터베이스를 관리하지 않음
         db_table = 'space_with_categories'  # VIEW 이름
+        
+class Booking(models.Model):
+    booking_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    space = models.ForeignKey(Space, on_delete=models.CASCADE)
+    start_date = models.DateField(null=False)
+    end_date = models.DateField(null=False)
+    booking_status = models.CharField(max_length=20, null=False)
+    booking_created_at = models.DateTimeField(default=now, null=False)
+    booking_updated_at = models.DateTimeField(auto_now=True, null=False)
+
+    class Meta:
+        db_table = 'booking'  # 테이블 이름
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(end_date__gt=models.F('start_date')),
+                name='check_end_date_gt_start_date'
+            ),
+        ]

@@ -255,3 +255,14 @@ def space_detail(request, space_id):
         'reviews': reviews,
     }
     return render(request, 'space_detail.html', context)
+
+@login_required
+def booking(request, space_id):
+    space = get_object_or_404(Space, pk=space_id)
+    reviews = []  # 필요에 따라 리뷰 데이터를 추가
+
+    context = {
+        'space': space,
+        'reviews': reviews,
+    }
+    return render(request, 'booking.html', context)
