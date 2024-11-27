@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories
-from accounts.models import User as CustomUser
+from accounts.models import User as CustomUser, Host
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
+from django.db.models import ObjectDoesNotExist
+
 
 @login_required
 def home(request):
@@ -160,3 +162,60 @@ def booking_management(request):
         return redirect('my_page')  # 호스트가 아닌 경우 접근 금지
 
     return render(request, 'booking_management.html', {'bookings': bookings})
+
+@login_required
+def edit_user_info(request):
+    try:
+        auth_user = request.user
+        user = CustomUser.objects.get(email=auth_user.username)
+    except CustomUser.DoesNotExist:
+        return render(request, 'edit_user_info.html', {'error': '사용자를 찾을 수 없습니다.'})
+
+    if request.method == 'GET':
+        context = {
+            'email': user.email,
+            'password': user.password,  # 비밀번호는 암호화되어 있으므로 보통은 표시하지 않음
+            'user_name': user.user_name,
+            'phone': user.phone,
+            'role': user.role,
+        }
+
+        if user.role.lower() == 'host':
+            try:
+                host = Host.objects.get(user=user)
+                context.update({
+                    'company_name': host.company_name,
+                    'business_license': host.business_license,
+                })
+            except ObjectDoesNotExist:
+                context.update({'company_name': '', 'business_license': ''})
+
+        return render(request, 'edit_user_info.html', context)
+
+    elif request.method == 'POST':
+        user.user_name = request.POST.get('user_name', user.user_name)
+        user.phone = request.POST.get('phone', user.phone)
+
+        new_password = request.POST.get('password')
+        if new_password:
+            user.password = new_password
+
+        user.save()
+
+        if user.role.lower() == 'host':
+            company_name = request.POST.get('company_name', '')
+            business_license = request.POST.get('business_license', '')
+
+            try:
+                host = Host.objects.get(user=user)
+                host.company_name = company_name
+                host.business_license = business_license
+                host.save()
+            except ObjectDoesNotExist:
+                Host.objects.create(
+                    user=user,
+                    company_name=company_name,
+                    business_license=business_license
+                )
+
+        return redirect('my_page')  # 수정 완료 후 마이페이지로 리디렉션

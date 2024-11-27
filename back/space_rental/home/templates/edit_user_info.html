@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space-Rental-Platform</title>
+    <link rel="stylesheet" href="assets/css/login_page.css" />
+    <style>
+      .toggle-switch {
+        margin: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .toggle-input {
+        display: none;
+      }
+
+      .toggle-label {
+        position: relative;
+        display: block;
+        width: 40px;
+        height: 24px;
+        background-color: #ccc;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .toggle-label::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+      }
+
+      .toggle-input:checked + .toggle-label {
+        background-color: darkslateblue;
+      }
+      .toggle-input:checked + .toggle-label::before {
+        transform: translateX(16px);
+      }
+      .toggle-wrapper {
+        display: flex;
+        width: 330px;
+        height: 40px;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 6px;
+        background-color: #f8f8f8;
+        padding-left: 10px;
+        color: darkslateblue;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 16px;
+      }
+      .host-info-wrapper {
+        display: none;
+        width: 320px;
+        margin-bottom: 16px;
+      }
+      .register-btn {
+        font-size: 16px;
+        font-family: "Roboto", sans-serif;
+        color: white;
+        border: none;
+        background-color: darkslateblue;
+        width: 340px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 16px;
+      }
+
+      .register-btn:hover {
+        background-color: slateblue;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>SRP</h1>
+    </header>
+    <div class="body-wrapper">
+      <div class="login-wrapper">
+        <h2>Edit User Information</h2>
+        <form method="post" action="{% url 'edit_user_info' %}" id="edit-form">
+          {% csrf_token %}
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value="{{ email }}"
+            readonly
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value="{{ password }}"
+          />
+          <input
+            type="text"
+            name="user_name"
+            placeholder="Name"
+            value="{{ user_name }}"
+            required
+          />
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            value="{{ phone }}"
+            required
+          />
+          {% if role == "host" %}
+          <div class="host-info-wrapper" id="host-info-wrapper">
+            <input
+              type="text"
+              name="company_name"
+              placeholder="Company Name"
+              value="{{ company_name }}"
+            />
+            <input
+              type="text"
+              name="business_license"
+              placeholder="Business License"
+              value="{{ business_license }}"
+            />
+          </div>
+          {% endif %}
+          <button id="register-btn" class="register-btn" type="submit">
+            수정 완료
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
