@@ -111,16 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-MIGRATION_MODULES = {
-    'auth': None,
-    'contenttypes': None,
-    'sessions': None,
-    'admin': None,
-    'messages': None,
-    'staticfiles': None
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
