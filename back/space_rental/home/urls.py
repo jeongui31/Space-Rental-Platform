@@ -8,6 +8,6 @@ urlpatterns = [
      path('space_reg/', views.space_reg, name="space_reg"),
      path('booking_management/', views.booking_management, name='booking_management'),
      path('update_space/<int:space_id>/', views.update_space, name='update_space'),
-     path('space/<int:space_id>/', views.space_detail, name='space_detail')
+     path('space/<int:space_id>/', views.space_detail, name='space_detail'),
 ]
 

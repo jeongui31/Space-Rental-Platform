@@ -6,6 +6,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ space.space_name }} - 상세 정보</title>
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+    <style>
+      .body-wrapper {
+        font-size: 14px;
+        font-family: "Roboto", sans-serif;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        margin: 0;
+        padding: 20px;
+        gap: 20px; /* 간격 추가 */
+      }
+      .image-wrapper {
+        width: 800px;
+        height: 600px;
+        padding: 40px;
+        border: 1px solid slateblue;
+        justify-content: center;
+        box-sizing: border-box;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+      }
+      .space-name-wrapper {
+        display: flex;
+        border-left: 1px solid;
+        flex-direction: column;
+        padding: 10px;
+        padding-bottom: 0px;
+        margin-bottom: 10px;
+        width: 800px;
+        height: 100px;
+        font-size: 30px;
+        font-weight: bold;
+        text-align: left;
+      }
+
+      .booking-wrapper {
+        width: 400px;
+        height: auto; /* 높이 자동 조정 */
+        padding: 20px;
+        border: 1px solid slateblue;
+        justify-content: center;
+        box-sizing: border-box;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+      }
+
+      .description {
+        width: 100%;
+        height: auto;
+        margin-bottom: 16px;
+        border-radius: 6px;
+        background-color: #f1f1f1;
+        font-size: 14px; /* 글씨 크기 줄임 */
+        font-weight: normal; /* 글씨 굵기 제거 */
+        color: black; /* 글씨 색 검정 */
+        padding: 10px; /* 내부 여백 추가 */
+      }
+      .booking-wrapper > div {
+        font-size: 20px;
+        text-align: left;
+        font-weight: bold;
+        color: darkslateblue;
+        margin-bottom: 10px;
+      }
+
+      .host-info-wrapper {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .host-info-wrapper > div {
+        font-size: 14px;
+        color: rgb(87, 87, 87);
+        text-align: end;
+      }
+
+      .review-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%; /* 전체 가로 크기 맞춤 */
+        padding: 30px;
+        border-top: 1px solid rgb(87, 87, 87);
+        justify-content: start;
+      }
+
+      .review {
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        padding: 10px;
+        margin-top: 40px;
+        font-size: 16px;
+      }
+
+      .stars {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .star {
+        font-size: 20px;
+        color: lightgray; /* 기본적으로 회색 */
+        margin-right: 4px;
+      }
+
+      .star.filled {
+        color: gold; /* 채워진 별은 금색 */
+      }
+
+      button {
+        font-size: 20px;
+        font-weight: bold;
+        font-family: "Roboto", sans-serif;
+        color: white;
+        border: none;
+        background-color: darkslateblue;
+        width: 360px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 40px;
+      }
+
+      button:hover {
+        background-color: slateblue;
+      }
+
+      hr {
+        width: 100%; /* 구분선 폭을 오른쪽 박스 크기로 조정 */
+        border: 1px solid slateblue;
+      }
+    </style>
   </head>
   <body>
     <header>
@@ -13,35 +151,74 @@
       <a href="{% url 'home' %}">홈으로 돌아가기</a>
       <hr />
     </header>
-    <main>
-      <div>
-        <img
-          src="{{ space.image|default:'https://via.placeholder.com/800x600' }}"
-          alt="장소 이미지"
-        />
-      </div>
-      <div>
-        <h2>상세 정보</h2>
-        <p><strong>주소:</strong> {{ space.address }}</p>
-        <p><strong>설명:</strong> {{ space.description|default:"없음" }}</p>
-        <p><strong>수용 인원:</strong> {{ space.capacity }}명</p>
-        <p><strong>가격:</strong> {{ space.price_per_date }}원</p>
-        <p><strong>등록일:</strong> {{ space.space_created_at }}</p>
-        <p><strong>업데이트일:</strong> {{ space.space_updated_at }}</p>
-      </div>
-      <div>
-        <h2>리뷰</h2>
-        {% for review in reviews %}
-        <div>
-          <p><strong>{{ review.user.username }}</strong></p>
-          <p>평점: {{ review.rating }}</p>
-          <p>{{ review.comment }}</p>
-          <p>작성일: {{ review.created_at }}</p>
+    <div class="body-wrapper">
+      <div class="leftside">
+        <div class="image-wrapper">
+          <img
+            src="{{ space.image|default:'https://via.placeholder.com/800x600' }}"
+            alt="장소 이미지"
+            style="
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 8px;
+            "
+          />
         </div>
-        {% empty %}
-        <p>등록된 리뷰가 없습니다.</p>
-        {% endfor %}
+        <div class="review-wrapper">
+          <div class="review-avg">
+            평점 : {{ space.review_avg|default:'0.0' }}
+          </div>
+          {% for review in reviews %}
+          <div class="review">
+            <div class="review-user-id">{{ review.user.username }}</div>
+            <div class="rating-and-date">
+              <div class="review-rating">
+                <div class="stars">
+                  {% for i in "12345"|slice:":review.rating" %}
+                  <span class="star filled">&#9733;</span>
+                  {% endfor %} {% for i in "12345"|slice:"review.rating:" %}
+                  <span class="star">&#9733;</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="review-create-at">{{ review.created_at }}</div>
+            </div>
+            <div class="comment">
+              {{ review.comment|default:"리뷰 내용 없음" }}
+            </div>
+          </div>
+          {% empty %}
+          <p>등록된 리뷰가 없습니다.</p>
+          {% endfor %}
+        </div>
       </div>
-    </main>
+      <div class="rightside">
+        <div class="booking-wrapper">
+          <div class="address">주소: {{ space.address }}</div>
+          <div class="capacity">총 수용인원: {{ space.capacity }}명</div>
+          <div class="price-per-date">
+            대관비용: {{ space.price_per_date|floatformat:0 }}원
+          </div>
+          <div class="description">
+            {{ space.description|default:"설명 없음" }}
+          </div>
+          <div class="host-info-wrapper">
+            <div class="host-user-id">
+              소유자: {{ space.host_user.username }}
+            </div>
+            <div class="space-create-at">
+              등록일: {{ space.space_created_at }}
+            </div>
+            <div class="space-update-at">
+              마지막 업데이트: {{ space.space_updated_at }}
+            </div>
+          </div>
+          <button id="booking-btn" class="booking-btn" type="button">
+            예약하기
+          </button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
