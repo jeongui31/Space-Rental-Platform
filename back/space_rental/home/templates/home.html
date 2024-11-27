@@ -68,7 +68,7 @@
             {% for place in places %}
             <div class="place-item">
                 <img src="{{ place.image|default:'https://via.placeholder.com/300x200' }}" alt="이미지 없음" />
-                <h3>{{ place.space_name }}</h3>
+                <a href="{% url 'space_detail' place.space_id %}"><h3>{{ place.space_name }}</h3></a>
                 <p><strong>주소:</strong> {{ place.address }}</p>
                 <p><strong>설명:</strong> {{ place.description|default:"없음" }}</p>
                 <p><strong>수용 인원:</strong> {{ place.capacity }}명</p>

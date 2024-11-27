@@ -244,3 +244,14 @@ def edit_user_info(request):
                 )
 
         return redirect('my_page')  # 수정 완료 후 마이페이지로 리디렉션
+
+@login_required
+def space_detail(request, space_id):
+    space = get_object_or_404(Space, pk=space_id)
+    reviews = []  # 리뷰 관련 데이터를 추가할 수 있습니다.
+
+    context = {
+        'space': space,
+        'reviews': reviews,
+    }
+    return render(request, 'space_detail.html', context)
