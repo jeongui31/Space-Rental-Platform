@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>예약 처리</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .booking-wrapper {
+        margin: 20px auto;
+        padding: 20px;
+        width: 600px;
+        border-radius: 14px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+      }
+      .booking-item {
+        background-color: #ffffff;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .booking-item button {
+        padding: 5px 10px;
+        background-color: darkslateblue;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .booking-item button:hover {
+        background-color: slateblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="booking-wrapper">
+      <h3>예약 처리</h3>
+      {% if bookings %}
+      <ul>
+        {% for booking in bookings %}
+        <li class="booking-item">
+          <strong>{{ booking.title }}</strong><br />
+          {{ booking.details }}<br />
+          <button type="button">승인</button>
+          <button type="button">거부</button>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>처리할 예약이 없습니다.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

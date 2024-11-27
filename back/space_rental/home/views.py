@@ -10,7 +10,36 @@ def home(request):
 
 @login_required
 def my_page(request):
-    return render(request, 'my_page.html')
+    auth_user = request.user
+    try:
+        user = CustomUser.objects.get(email=auth_user.username)
+    except CustomUser.DoesNotExist:
+        return render(request, 'my_page.html', {'error': '사용자를 찾을 수 없습니다.'})
+
+    role = user.role.lower()  # role 값을 소문자로 변환하여 처리 (예: "guest", "host")
+
+    if role == "guest":
+        # Guest 사용자에게 표시할 예약 내역
+        reservations = []  # 예약 내역 가져오기 (로직 필요)
+        context = {
+            'role': role,
+            'user': user,
+            'reservations': reservations,
+        }
+    elif role == "host":
+        # Host 사용자에게 표시할 등록된 공간
+        spaces = SpaceWithCategories.objects.filter(user=user)
+        context = {
+            'role': role,
+            'user': user,
+            'spaces': spaces,
+        }
+    else:
+        # 예외 처리
+        context = {'error': '알 수 없는 사용자 유형입니다.'}
+
+    return render(request, 'my_page.html', context)
+
 
 @login_required
 def space_reg(request):
@@ -115,3 +144,19 @@ def update_space(request, space_id):
         'update_space.html',
         {'space': space, 'all_categories': all_categories, 'selected_categories': list(selected_categories)},
     )
+
+@login_required
+def booking_management(request):
+    auth_user = request.user
+    try:
+        user = CustomUser.objects.get(email=auth_user.username)
+    except CustomUser.DoesNotExist:
+        return render(request, 'my_page.html', {'error': '사용자를 찾을 수 없습니다.'})
+
+    # 예약 처리 관련 데이터 가져오기
+    if user.role.lower() == 'host':
+        bookings = []  # 예약 데이터 로드 로직 추가
+    else:
+        return redirect('my_page')  # 호스트가 아닌 경우 접근 금지
+
+    return render(request, 'booking_management.html', {'bookings': bookings})

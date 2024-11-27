@@ -1,11 +1,150 @@
 <!DOCTYPE html>
-<h1>마이페이지</h1>
-<button
-id="mypage-btn"
-class="mypage-btn"
-type="button"
-onclick="document.location.href='{% url "space_reg" %}'"
->
-공간 등록
-</button>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      h1 {
+        color: darkslateblue;
+        font-size: 30px;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      hr {
+        width: 97%;
+        height: 1px;
+        background-color: darkslateblue;
+      }
+      .mypage-wrapper {
+        margin: 20px auto;
+        padding: 20px;
+        width: 600px;
+        border-radius: 14px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+      }
+      .user-info > div {
+        margin-bottom: 12px;
+        padding: 10px;
+        background-color: #f5f0ff;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        color: #767676;
+      }
+      .edit-info > button {
+        font-size: 16px;
+        font-family: "Roboto", sans-serif;
+        font-weight: bold;
+        color: white;
+        border: none;
+        background-color: darkslateblue;
+        width: 200px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .edit-info > button:hover {
+        background-color: slateblue;
+      }
+      .host-info > button {
+        font-size: 16px;
+        font-family: "Roboto", sans-serif;
+        font-weight: bold;
+        color: white;
+        border: none;
+        background-color: darkslateblue;
+        width: 200px;
+        height: 40px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .host-info > button:hover {
+        background-color: slateblue;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>SRP</h1>
+      <hr />
+    </header>
+    <div class="mypage-wrapper">
+      <div class="user-info">
+        <div>
+          <span><strong>이름:</strong></span>
+          <span>{{ user.user_name }}</span>
+        </div>
+        <div>
+          <span><strong>이메일:</strong></span>
+          <span>{{ user.email }}</span>
+        </div>
+        <div>
+          <span><strong>전화번호:</strong></span>
+          <span>{{ user.phone }}</span>
+        </div>
+        <div>
+          <span><strong>역할:</strong></span>
+          <span>{{ user.role }}</span>
+        </div>
+        <div class="edit-info">
+          <button
+            type="button"
+            onclick="document.location.href='edit_user_info_page.html'"
+          >
+            회원 정보 수정
+          </button>
+        </div>
+      </div>
+
+      {% if user.role == "guest" %}
+      <div class="guest-info">
+        <h3>최근 예약 내역</h3>
+        {% if bookings %}
+        <ul>
+          {% for booking in bookings %}
+          <li>{{ booking }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>예약 내역이 없습니다.</p>
+        {% endif %}
+      </div>
+      {% elif user.role == "host" %}
+      <div class="host-info">
+        <h3>호스트 관리</h3>
+        <button
+          type="button"
+          onclick="document.location.href='{% url 'space_reg' %}'"
+        >
+          공간 등록
+        </button>
+        <button
+          type="button"
+          onclick="document.location.href='{% url 'booking_management' %}'"
+        >
+          예약 처리
+        </button>
+      </div>
+
+      {% else %}
+      <p>알 수 없는 사용자 유형입니다.</p>
+      {% endif %}
+    </div>
+  </body>
 </html>
