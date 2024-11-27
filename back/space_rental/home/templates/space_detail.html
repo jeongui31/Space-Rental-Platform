@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
     <style>
       header {
-        position: relative; /* 내부 요소를 절대 위치로 배치할 수 있도록 설정 */
+        position: relative;
         height: 60px; /* header 높이 */
         display: flex;
         align-items: center;
@@ -26,6 +26,7 @@
         padding: 20px;
         gap: 20px; /* 간격 추가 */
       }
+      
       .image-wrapper {
         width: 800px;
         height: 600px;
@@ -53,13 +54,17 @@
 
       .booking-wrapper {
         width: 400px;
-        height: auto; /* 높이 자동 조정 */
+        height: 520px;
         padding: 20px;
         border: 1px solid slateblue;
         justify-content: center;
         box-sizing: border-box;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         border-radius: 8px;
+        margin-top: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
       }
 
       .booking-wrapper > .description {
