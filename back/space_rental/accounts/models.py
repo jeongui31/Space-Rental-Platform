@@ -23,8 +23,8 @@ class Host(models.Model):
     )
     company_name = models.CharField(
         max_length=100,
-        blank=True,
-        null=True
+        null=True,
+        default='개인'
     )
     business_license = models.CharField(
         max_length=30,
@@ -39,3 +39,8 @@ class Host(models.Model):
     class Meta:
         managed = True
         db_table = 'host'
+        
+    def save(self, *args, **kwargs):
+        if not self.company_name:  # company_name이 비어 있으면 default 값 설정
+            self.company_name = '개인'
+        super().save(*args, **kwargs)
