@@ -32,16 +32,6 @@ body {
 
 .login-wrapper{
     width: 400px;
-    height: 400px;
-    padding: 40px;
-    justify-content: center;
-    box-sizing: border-box;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    border-radius: 8px;
-}
-
-.signup-wrapper{
-    width: 400px;
     height: 600px;
     padding: 40px;
     justify-content: center;
@@ -50,13 +40,13 @@ body {
     border-radius: 8px;
 }
 
-.login-wrapper > h2, .signup-wrapper > h2{
+.login-wrapper > h2{
     font-size: 24px;
     color: #6A24FE;
     margin-bottom: 20px;
 }
 
-#login-form > div > input, #host-info-wrapper > input, #signup-form > input{
+#login-form > input, #host-info-wrapper > input{
     width: 100%;
     height: 40px;
     padding: 0 10px;
@@ -65,7 +55,7 @@ body {
     background-color: #f8f8f8;
 }
 
-#login-form > div >input::placeholder, #host-info-wrapper > input::placeholder, #signup-form > input::placeholder{
+#login-form > input::placeholder, #host-info-wrapper > input::placeholder{
     color: #D2D2D2;
 }
 
