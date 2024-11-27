@@ -8,7 +8,8 @@ from django.db.models import ObjectDoesNotExist
 
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    places = Space.objects.all()  # 모든 장소를 가져옴
+    return render(request, 'home.html', {'places': places})
 
 @login_required
 def my_page(request):
