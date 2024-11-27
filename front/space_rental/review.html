@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>리뷰 작성</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      h1 {
+        color: darkslateblue;
+        font-size: 30px;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      hr {
+        width: 97%;
+        height: 1px;
+        background-color: darkslateblue;
+      }
+      h2 {
+        color: darkslateblue;
+        font-size: 30px;
+        display: block;
+        width: 600px;
+        text-align: start;
+        justify-content: center;
+        align-items: center;
+      }
+
+      form {
+        width: 600px;
+        height: 100%;
+        padding: 40px;
+        display: flex;
+        margin-bottom: 20px;
+        flex-direction: column;
+        justify-content: start;
+        box-sizing: border-box;
+        border: 1px solid darkslateblue;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        border-radius: 8px;
+      }
+
+      form > label{
+        font-size: 18px;
+        color: darkslateblue;
+        font-weight: bold;
+      }
+
+      form > textarea, form > input{
+        margin-top: 10px;
+        width: 100%;
+        height: 40px;
+        margin-bottom: 16px;
+        border-radius: 6px;
+        border: 1px solid darkslateblue;
+        background-color: #f8f8f8;
+      }
+
+      button{
+        font-size: 16px;
+        font-family: "Roboto", sans-serif;
+        font-weight: bold;
+        color: white;
+        border: none;
+        background-color: darkslateblue;
+        width: 100%;
+        height: 40px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      form > button:hover{
+        background-color: slateblue;
+      }
+
+      .space-name-wrapper {
+                display: flex;
+                border-left: 1px solid;
+                flex-direction: column;
+                padding: 10px;
+                padding-bottom: 0px;
+                margin-bottom: 10px;
+                width: 580px;
+                height: 100px;
+                font-size: 30px;
+                font-weight: bold;
+                text-align: left;
+                color: #606060;
+            }
+        .review-rating-btn {
+            display: block;
+            width: 30px;
+            height: 30px;
+            background-color: #ccc;
+        }
+        .review-raitng-btn-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 50%;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>리뷰 작성</h1>
+    <hr />
+    <div class="space-name-wrapper">
+        <div class="space-name" id="space_name" style="margin-bottom: 10px;">장소 이름</div> 
+        <div class="address" id="address" style="font-size: 20px;">장소 주소</div>
+    </div>
+    <form method="post">
+        <label for="review_rating" style="margin-bottom: 10px;">별점:</label>
+        <div class="review-raitng-btn-wrapper">
+            <button class="review-rating-btn" value="1" type="button">1</button>
+            <button class="review-rating-btn" value="2" type="button">2</button>
+            <button class="review-rating-btn" value="3" type="button">3</button>
+            <button class="review-rating-btn" value="4" type="button">4</button>
+            <button class="review-rating-btn" value="5" type="button">5</button>
+        </div>
+        <input type="hidden" id="review_rating" name="review-rating" value="">
+        <label for="description">후기:</label>
+        <textarea id="comment" name="comment" rows="4" cols="50">
+{{ space.comment }}</textarea
+      ><br />
+      <button type="submit">작성 완료</button>
+    </form>
+    <script>
+        document.querySelectorAll('.review-rating-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const ratingInput = document.getElementById('review_rating');
+                ratingInput.value = this.value;
+
+                document.querySelectorAll('.review-rating-btn').forEach(btn => {
+                    btn.style.backgroundColor = '#ccc';
+                });
+                this.style.backgroundColor = 'darkslateblue';
+                this.style.color = 'white';
+            })
+        })
+    </script>
+  </body>
+</html>
