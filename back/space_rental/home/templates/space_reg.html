@@ -34,7 +34,8 @@
         align-items: center;
       }
 
-      form, ul {
+      form,
+      ul {
         width: 600px;
         height: 100%;
         padding: 40px;
@@ -44,17 +45,19 @@
         justify-content: start;
         box-sizing: border-box;
         border: 1px solid darkslateblue;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         border-radius: 8px;
       }
 
-      form > label, form > p{
+      form > label,
+      form > p {
         font-size: 18px;
         color: darkslateblue;
         font-weight: bold;
       }
 
-      form > input , form > textarea{
+      form > input,
+      form > textarea {
         margin-top: 10px;
         width: 100%;
         height: 40px;
@@ -80,7 +83,8 @@
         border-radius: 5px;
         cursor: pointer;
       }
-      button:hover, li > a:hover {
+      button:hover,
+      li > a:hover {
         background-color: slateblue;
       }
 
@@ -109,15 +113,10 @@
     <h1>마이페이지</h1>
     <hr />
     <h2>공간 등록</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <label for="space_name">공간 이름:</label>
-      <input
-        type="text"
-        id="space_name"
-        name="space_name"
-        required
-      /><br />
+      <input type="text" id="space_name" name="space_name" required /><br />
 
       <label for="description">설명:</label>
       <textarea
@@ -139,6 +138,7 @@
         min="0"
         required
       /><br />
+
       <label for="price_per_date">하루 당 가격:</label>
       <input
         type="number"
@@ -147,8 +147,25 @@
         min="0"
         required
       /><br />
+
+      <label for="image">이미지 업로드:</label>
+      <input
+        type="file"
+        id="image"
+        name="image"
+        accept="image/*"
+        onchange="previewImage(event)"
+      />
+      <img
+        id="imagePreview"
+        src=""
+        alt="Image Preview"
+        style="max-width: 300px; display: none"
+      />
+      <br />
+
       <p>하나 이상의 카테고리를 선택하세요:</p>
-      <div id="categories" style="display: flex; flex-direction: row;">
+      <div id="categories" style="display: flex; flex-direction: row">
         {% for category in categories %}
         <input
           type="checkbox"
@@ -156,7 +173,14 @@
           name="category_name"
           value="{{ category.category_id }}"
         />
-        <label for="category_{{ category.category_id }}" style="font-weight: bold; font-size: 16px; color: darkslateblue; margin-right: 5px;"
+        <label
+          for="category_{{ category.category_id }}"
+          style="
+            font-weight: bold;
+            font-size: 16px;
+            color: darkslateblue;
+            margin-right: 5px;
+          "
           >{{ category.category_name }}</label
         >
         <br />
@@ -167,6 +191,12 @@
       <button type="submit" onclick="return validateForm()">등록</button>
 
       <script>
+        function previewImage(event) {
+          const imagePreview = document.getElementById("imagePreview");
+          imagePreview.src = URL.createObjectURL(event.target.files[0]);
+          imagePreview.style.display = "block";
+        }
+
         function validateForm() {
           const checkboxes = document.querySelectorAll(
             'input[name="category_name"]:checked'
@@ -184,8 +214,17 @@
     <ul>
       <hr />
       {% for space in spaces %}
-      <li style="font-weight: bold; font-size: 16px; display: flex; flex-direction: column;">
-        <strong style="font-size: 20px; margin-bottom: 5px;">{{ space.space_name }}</strong>
+      <li
+        style="
+          font-weight: bold;
+          font-size: 16px;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <strong style="font-size: 20px; margin-bottom: 5px"
+          >{{ space.space_name }}</strong
+        >
         <span>설명: {{ space.description|default:"없음" }}</span>
         <span>주소: {{ space.address }}</span>
         <span>수용 인원: {{ space.capacity }}명</span>

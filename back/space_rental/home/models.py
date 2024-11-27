@@ -6,6 +6,7 @@ class Space(models.Model):
     space_id = models.AutoField(primary_key=True)
     space_name = models.CharField(max_length=200, null=False)
     description = models.TextField(null=True, blank=True)
+    image = models.URLField(null=True, blank=True)
     address = models.CharField(max_length=200, null=False)
     capacity = models.PositiveIntegerField(null=False)
     price_per_date = models.PositiveIntegerField(null=False)

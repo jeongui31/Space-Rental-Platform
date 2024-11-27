@@ -42,6 +42,7 @@ def my_page(request):
 
     return render(request, 'my_page.html', context)
 
+import requests
 
 @login_required
 def space_reg(request):
@@ -52,7 +53,29 @@ def space_reg(request):
         address = request.POST.get('address')
         capacity = request.POST.get('capacity')
         price_per_date = request.POST.get('price_per_date')
-        category_ids = request.POST.getlist('category_name')  # 체크된 모든 카테고리 ID 가져오기
+        category_ids = request.POST.getlist('category_name')
+
+        # 이미지 파일 가져오기
+        image_file = request.FILES.get('image')  # HTML 폼의 이미지 필드
+        image_url = None
+
+        if image_file:
+            # Imgbb API에 이미지 업로드
+            imgbb_api_key = "afacb4ce431ff6c3171943864161107f"  # 여기에 Imgbb API 키 입력
+            imgbb_endpoint = "https://api.imgbb.com/1/upload"
+
+            try:
+                response = requests.post(
+                    imgbb_endpoint,
+                    data={'key': imgbb_api_key},
+                    files={'image': image_file}
+                )
+                if response.status_code == 200:
+                    image_url = response.json().get('data', {}).get('url')  # 업로드된 이미지 URL
+                else:
+                    print("Imgbb API Error:", response.json())
+            except Exception as e:
+                print("Image upload failed:", e)
 
         # 현재 로그인한 사용자 가져오기
         auth_user = request.user
@@ -69,6 +92,7 @@ def space_reg(request):
             capacity=int(capacity),
             price_per_date=int(price_per_date),
             user=user,
+            image=image_url,  # 이미지 URL 저장
         )
         space.save()
 
@@ -87,7 +111,7 @@ def space_reg(request):
     auth_user = request.user
     try:
         user = CustomUser.objects.get(email=auth_user.username)
-        spaces = SpaceWithCategories.objects.filter(user=user)  # 해당 사용자가 등록한 공간만 가져오기
+        spaces = SpaceWithCategories.objects.filter(user=user)
     except CustomUser.DoesNotExist:
         spaces = []
 
