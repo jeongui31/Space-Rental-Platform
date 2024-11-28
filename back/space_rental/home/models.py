@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
-from accounts.models import User
+from accounts.models import User, Host
 
 class Space(models.Model):
     space_id = models.AutoField(primary_key=True)
@@ -96,6 +96,37 @@ class Review(models.Model):
                 name='check_review_rating_range'
             ),
         ]
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_host_rating()
+
+    def delete(self, *args, **kwargs):
+        host = self.get_host()
+        super().delete(*args, **kwargs)
+        if host:
+            self.update_host_rating(host)
+
+    def get_host(self):
+        space = self.space
+        host = Host.objects.filter(user=space.user).first()
+        return host
+    
+    def update_host_rating(self, host=None):
+        if not host:
+            host = self.get_host()
+        if not host:
+            return
+
+        spaces = Space.objects.filter(user=host.user)
+        reviews = Review.objects.filter(space__in=spaces)
+
+        if reviews.exists():
+            average_rating = reviews.aggregate(avg_rating=models.Avg('review_rating'))['avg_rating']
+            host.host_rating = round(average_rating, 2)
+        else:
+            host.host_rating = 0.00
+        
+        host.save()
 
 class UserBookingView(models.Model):
     booking_id = models.IntegerField(primary_key=True)

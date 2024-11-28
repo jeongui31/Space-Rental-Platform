@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories, UserBookingView, Payment
+from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories, UserBookingView, Payment, Review
 from accounts.models import User as CustomUser, Host
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
@@ -278,11 +278,20 @@ def edit_user_info(request):
 @login_required
 def space_detail(request, space_id):
     space = get_object_or_404(Space, pk=space_id)
-    reviews = []  # 리뷰 관련 데이터를 추가할 수 있습니다.
+    reviews = Review.objects.filter(space=space)
+    temp_total = 0
+    for i in reviews:
+        temp_total = temp_total + i.review_rating
+
+    if not reviews:
+        review_avg = 0.00
+    else:
+        review_avg = temp_total / len(reviews)
 
     context = {
         'space': space,
         'reviews': reviews,
+        'review_avg': review_avg
     }
     return render(request, 'space_detail.html', context)
 
@@ -436,3 +445,26 @@ def update_booking_status(request, booking_id, status):
         return JsonResponse({'message': '예약이 승인되었습니다.'})
     else:
         return JsonResponse({'error': '잘못된 상태 업데이트 요청입니다.'}, status=400)
+
+@login_required
+@csrf_exempt
+def review(request, booking_id):
+    user = CustomUser.objects.get(email=request.user.username)
+    booking = get_object_or_404(Booking, booking_id=booking_id)
+    space = booking.space
+    if request.method == 'GET':
+    
+        return render(request, 'review.html', {'space': space})
+
+    if request.method == 'POST':
+        review_rating = request.POST.get('review_rating', 5)
+        comment = request.POST.get('comment')
+
+        Review.objects.create(
+            user=user,
+            space=space,
+            review_rating=review_rating,
+            comment=comment,
+        )
+
+        return redirect('my_page')

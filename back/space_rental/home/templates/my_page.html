@@ -52,7 +52,7 @@
         font-weight: bold;
         color: #767676;
       }
-      .edit-info > button {
+      .edit-info > button, .review-btn{
         font-size: 16px;
         font-family: "Roboto", sans-serif;
         font-weight: bold;
@@ -67,7 +67,7 @@
         border-radius: 5px;
         cursor: pointer;
       }
-      .edit-info > button:hover {
+      .edit-info > button:hover, .review-btn:hover {
         background-color: slateblue;
       }
       .host-info-btn > button {
@@ -161,6 +161,15 @@
             <p><strong>시작 날짜:</strong> {{ reservation.start_date }}</p>
             <p><strong>종료 날짜:</strong> {{ reservation.end_date }}</p>
             <p><strong>상태:</strong> {{ reservation.booking_status }}</p>
+            {% if reservation.booking_status == "Confirmed" %}
+            <form
+            method= "GET"
+            action="{% url 'review' reservation.booking_id %}"
+          >
+            {% csrf_token %}
+            <button type="submit" class="review-btn" style="justify-self: right;">리뷰 작성</button>
+          </form>
+            {% endif %}
           </li>
           {% endfor %}
         </ul>
