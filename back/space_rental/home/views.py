@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories, UserBookingView
+from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories, UserBookingView, Payment
 from accounts.models import User as CustomUser, Host
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
@@ -337,8 +337,14 @@ def booking(request, space_id):
         except CustomUser.DoesNotExist:
             return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=400)
 
-        # 새로운 예약 생성
-        Booking.objects.create(
+        # Calculate total payment amount
+        start_date_obj = date.fromisoformat(start_date)
+        end_date_obj = date.fromisoformat(end_date)
+        total_days = (end_date_obj - start_date_obj).days + 1
+        total_amount = total_days * space.price_per_date
+
+        # Create a new booking
+        booking = Booking.objects.create(
             user=user,
             space=space,
             start_date=start_date,
@@ -346,7 +352,16 @@ def booking(request, space_id):
             booking_status='Pending',
         )
 
-        return JsonResponse({'message': '예약이 완료되었습니다!'})
+        # Create a payment record linked to the booking
+        Payment.objects.create(
+            booking=booking,
+            amount=total_amount,
+            payment_method=payment_method,
+            payment_status='Success',  # Default status
+        )
+
+        return JsonResponse({'message': '예약과 결제가 완료되었습니다!'})
+
 
 
 
@@ -386,6 +401,14 @@ def reject_booking(request, booking_id):
             if booking.booking_status == 'Pending':
                 booking.booking_status = 'Canceled'
                 booking.save()
+                
+                # Update the payment status to Failed
+                try:
+                    payment = Payment.objects.get(booking=booking)
+                    payment.payment_status = 'Failed'
+                    payment.save()
+                except Payment.DoesNotExist:
+                    return JsonResponse({'error': '해당 예약과 연결된 결제가 없습니다.'}, status=400)
             return redirect('booking_management')
         except CustomUser.DoesNotExist:
             return HttpResponseForbidden("사용자를 찾을 수 없습니다.")

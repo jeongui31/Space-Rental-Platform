@@ -244,44 +244,45 @@
           const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
 
           if (!startDate || !endDate || !paymentMethod) {
-            alert("모든 필드를 입력하세요.");
-            return;
+              alert("모든 필드를 입력하세요.");
+              return;
           }
 
           if (new Date(endDate) < new Date(startDate)) {
-            alert("종료 날짜는 시작 날짜보다 이전일 수 없습니다.");
-            return;
+              alert("종료 날짜는 시작 날짜보다 이전일 수 없습니다.");
+              return;
           }
 
           fetch("{% url 'booking' space.space_id %}", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: JSON.stringify({
-              start_date: startDate,
-              end_date: endDate,
-              payment_method: paymentMethod,
-            }),
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": "{{ csrf_token }}",
+              },
+              body: JSON.stringify({
+                  start_date: startDate,
+                  end_date: endDate,
+                  payment_method: paymentMethod,
+              }),
           })
-            .then((response) => {
-              if (!response.ok) {
-                return response.text().then((text) => {
-                  console.error("Response error:", text);
-                  throw new Error("서버 오류: " + text);
-                });
-              }
-              return response.json();
-            })
-            .then((data) => {
-              alert(data.message || "예약이 완료되었습니다!");
-              window.location.href = "{% url 'my_page' %}";
-            })
-            .catch((error) => {
-              alert(error.message);
-            });
-        }
+              .then((response) => {
+                  if (!response.ok) {
+                      return response.text().then((text) => {
+                          console.error("Response error:", text);
+                          throw new Error("서버 오류: " + text);
+                      });
+                  }
+                  return response.json();
+              })
+              .then((data) => {
+                  alert(data.message || "예약이 완료되었습니다!");
+                  window.location.href = "{% url 'my_page' %}";
+              })
+              .catch((error) => {
+                  alert(error.message);
+              });
+      }
+
 
         // 버튼 클릭 이벤트 연결
         document.getElementById("booking-btn").addEventListener("click", submitBooking);
