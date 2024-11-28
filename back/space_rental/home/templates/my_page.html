@@ -89,12 +89,36 @@
       .host-info-btn > button:hover {
         background-color: slateblue;
       }
+
+      .guest-info ul {
+        padding: 0;
+        list-style: none;
+      }
+
+      .guest-info li {
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #f9f9f9;
+      }
+
+      .guest-info li p {
+        text-align: left;
+        margin: 5px 0;
+      }
     </style>
   </head>
   <body>
     <header>
-      <h1 style="position: absolute; left: 50%; transform: translateX(-50%);">SRP</h1>
-      <a href="{% url 'home' %}" style=" padding: 20px; border-right: 1px solid darkslateblue;">홈으로 돌아가기</a>
+      <h1 style="position: absolute; left: 50%; transform: translateX(-50%)">
+        SRP
+      </h1>
+      <a
+        href="{% url 'home' %}"
+        style="padding: 20px; border-right: 1px solid darkslateblue"
+        >홈으로 돌아가기</a
+      >
     </header>
     <hr />
     <div class="mypage-wrapper">
@@ -115,7 +139,7 @@
           <span><strong>역할:</strong></span>
           <span>{{ user.role }}</span>
         </div>
-        <div class="edit-info" style="justify-content: center;">
+        <div class="edit-info" style="justify-content: center">
           <button
             type="button"
             onclick="document.location.href='{% url 'edit_user_info' %}'"
@@ -128,10 +152,16 @@
       {% if user.role == "guest" %}
       <div class="guest-info">
         <h3>최근 예약 내역</h3>
-        {% if bookings %}
+        {% if reservations %}
         <ul>
-          {% for booking in bookings %}
-          <li>{{ booking }}</li>
+          {% for reservation in reservations %}
+          <li>
+            <p><strong>공간:</strong> {{ reservation.space_name }}</p>
+            <p><strong>주소:</strong> {{ reservation.address }}</p>
+            <p><strong>시작 날짜:</strong> {{ reservation.start_date }}</p>
+            <p><strong>종료 날짜:</strong> {{ reservation.end_date }}</p>
+            <p><strong>상태:</strong> {{ reservation.booking_status }}</p>
+          </li>
           {% endfor %}
         </ul>
         {% else %}
@@ -140,23 +170,29 @@
       </div>
       {% elif user.role == "host" %}
       <div class="host-info">
-        <h3 style="text-align: start;">호스트 관리</h3>
-        <div class="host-info-btn" style=" display: flex; justify-content: space-between; flex-direction: row;">
+        <h3 style="text-align: start">호스트 관리</h3>
+        <div
+          class="host-info-btn"
+          style="
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+          "
+        >
           <button
-          type="button"
-          onclick="document.location.href='{% url 'space_reg' %}'"
-        >
-          공간 등록
-        </button>
-        <button
-          type="button"
-          onclick="document.location.href='{% url 'booking_management' %}'"
-        >
-          예약 처리
-        </button>
+            type="button"
+            onclick="document.location.href='{% url 'space_reg' %}'"
+          >
+            공간 등록
+          </button>
+          <button
+            type="button"
+            onclick="document.location.href='{% url 'booking_management' %}'"
+          >
+            예약 처리
+          </button>
         </div>
       </div>
-
       {% else %}
       <p>알 수 없는 사용자 유형입니다.</p>
       {% endif %}

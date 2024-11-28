@@ -23,7 +23,7 @@ def my_page(request):
 
     if role == "guest":
         # Guest 사용자에게 표시할 예약 내역
-        reservations = []  # 예약 내역 가져오기 (로직 필요)
+        reservations = UserBookingView.objects.filter(email=user.email).order_by('-start_date')
         context = {
             'role': role,
             'user': user,
@@ -42,6 +42,7 @@ def my_page(request):
         context = {'error': '알 수 없는 사용자 유형입니다.'}
 
     return render(request, 'my_page.html', context)
+
 
 import requests
 
