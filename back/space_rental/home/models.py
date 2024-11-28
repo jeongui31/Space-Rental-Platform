@@ -66,13 +66,14 @@ class Booking(models.Model):
     booking_updated_at = models.DateTimeField(auto_now=True, null=False)
 
     class Meta:
-        db_table = 'booking'  # 테이블 이름
+        db_table = 'booking'
         constraints = [
             models.CheckConstraint(
-                check=models.Q(end_date__gt=models.F('start_date')),
-                name='check_end_date_gt_start_date'
+                check=models.Q(end_date__gte=models.F('start_date')),  # 수정된 조건: end_date >= start_date
+                name='check_end_date_gte_start_date'  # 새로운 제약 조건 이름
             ),
         ]
+
         
 from django.db import models
 from django.utils.timezone import now

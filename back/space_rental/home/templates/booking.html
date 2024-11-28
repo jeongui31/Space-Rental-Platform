@@ -73,6 +73,7 @@
         font-size: 18px;
         font-weight: bold;
       }
+
       .review-wrapper {
         display: flex;
         flex-direction: column;
@@ -101,12 +102,12 @@
 
       .star {
         font-size: 20px;
-        color: lightgray; /* 기본적으로 회색 */
+        color: lightgray;
         margin-right: 4px;
       }
 
       .star.filled {
-        color: gold; /* 채워진 별은 금색 */
+        color: gold;
       }
 
       button {
@@ -153,40 +154,15 @@
             "
           />
         </div>
-        <div class="review-wrapper">
-          <div
-            class="review-avg"
-            id="review_avg"
-            style="font-weight: bold; font-size: 20px; text-align: start"
-          ></div>
-          <div class="review" id="review">
-            <div
-              class="review-user-id"
-              id="review_user_id"
-              style="font-weight: bold"
-            ></div>
-            <div
-              class="rating-and-date"
-              style="display: flex; flex-direction: row; font-size: 16px"
-            >
-              <div class="review-rating" id="review_rating"></div>
-              <div
-                class="review-create-at"
-                id="review_create_at"
-                style="padding: 8px"
-              ></div>
-            </div>
-            <div class="comment" id="comment">리뷰 내용</div>
-          </div>
-        </div>
       </div>
       <div class="rightside">
         <div class="booking-wrapper">
           <label for="start_date">대여 시작 날짜 </label>
           <input type="date" id="start_date" min="{{ today|date:'Y-m-d' }}" />
 
-          <label for="start_date">대여 종료 날짜 </label>
+          <label for="end_date">대여 종료 날짜 </label>
           <input type="date" id="end_date" min="{{ today|date:'Y-m-d' }}" />
+
           <span>결제 방식</span>
           <div
             id="payment_methods"
@@ -194,77 +170,68 @@
           >
             <input
               type="radio"
-              id="Credit Card"
+              id="credit_card"
               name="payment_method"
-              value="credit_card"
-              style="margin-bottom: 5px"
+              value="Credit Card"
             />
             <label
-              for="Credit Card"
+              for="credit_card"
               style="
                 margin-right: 15px;
                 font-size: 16px;
                 color: darkslateblue;
                 font-weight: bold;
               "
+              >Credit Card</label
             >
-              Credit Card
-            </label>
+
             <input
               type="radio"
-              id="Debit Card"
+              id="debit_card"
               name="payment_method"
               value="Debit Card"
-              style="margin-bottom: 5px"
             />
             <label
-              for="Debit Card"
+              for="debit_card"
               style="
                 margin-right: 15px;
                 font-size: 16px;
                 color: darkslateblue;
                 font-weight: bold;
               "
+              >Debit Card</label
             >
-              Debit Card
-            </label>
+
             <input
               type="radio"
-              id="Bank Transfer"
+              id="bank_transfer"
               name="payment_method"
               value="Bank Transfer"
-              style="margin-bottom: 5px"
             />
             <label
-              for="Bank Transfer"
+              for="bank_transfer"
               style="
                 margin-right: 15px;
                 font-size: 16px;
                 color: darkslateblue;
                 font-weight: bold;
               "
+              >Bank Transfer</label
             >
-              Bank Transfer
-            </label>
+
             <input
               type="radio"
-              id="Mobile Payment"
+              id="mobile_payment"
               name="payment_method"
               value="Mobile Payment"
-              style="margin-bottom: 5px"
             />
             <label
-              for="Mobile Payment"
-              style="
-                margin-right: 15px;
-                font-size: 16px;
-                color: darkslateblue;
-                font-weight: bold;
-              "
+              for="mobile_payment"
+              style="font-size: 16px; color: darkslateblue; font-weight: bold"
+              >Mobile Payment</label
             >
-              Mobile Payment
-            </label>
           </div>
+
           <span>총 결제 금액 :</span>
           <div
             id="amount"
@@ -275,129 +242,58 @@
               align-self: end;
               display: block;
             "
-          ></div>
+          >
+            총 결제 금액: 0원
+          </div>
+
           <button id="booking-btn" onclick="submitBooking()">결제하기</button>
-
-          <script>
-            function submitBooking() {
-              const startDate = document.getElementById("start_date").value;
-              const endDate = document.getElementById("end_date").value;
-              const paymentMethod = document.querySelector(
-                'input[name="payment_method"]:checked'
-              )?.value;
-
-              if (!startDate || !endDate || !paymentMethod) {
-                alert("모든 필드를 입력하세요.");
-                return;
-              }
-
-              fetch("{% url 'booking' space.space_id %}", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-CSRFToken": "{{ csrf_token }}",
-                },
-                body: JSON.stringify({
-                  start_date: startDate,
-                  end_date: endDate,
-                  payment_method: paymentMethod,
-                }),
-              })
-                .then((response) => {
-                  if (!response.ok) {
-                    return response.text().then((text) => {
-                      console.error("Response error:", text);
-                      throw new Error("서버 오류: " + text);
-                    });
-                  }
-                  return response.json();
-                })
-                .then((data) => {
-                  alert(data.message || "예약이 완료되었습니다!");
-                  window.location.href = "{% url 'my_page' %}";
-                })
-                .catch((error) => {
-                  alert(error.message);
-                });
-            }
-          </script>
         </div>
       </div>
     </div>
     <script>
-      const space_name = "신공학관 4147";
-      const review_avg = 1.7;
-      const price_per_date = 1000000;
+      function submitBooking() {
+        const startDate = document.getElementById("start_date").value;
+        const endDate = document.getElementById("end_date").value;
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
 
-      const review_user_id = "alpha";
-      const review_rating = 3;
-      const review_create_at = "20xx-03-01";
-
-      const today = new Date();
-      const oneMonthLater = new Date();
-      oneMonthLater.setMonth(today.getMonth() + 1);
-
-      document.getElementById("amount").textContent =
-        price_per_date.toLocaleString("ko-KR") + "원";
-      document.getElementById("space_name").textContent = space_name;
-      document.getElementById("review_user_id").textContent = review_user_id;
-      document.getElementById("review_create_at").textContent =
-        review_create_at;
-      document.getElementById("review_avg").textContent =
-        "평점 : " + review_avg;
-      document.getElementById("start_date").value = today
-        .toISOString()
-        .substring(0, 10);
-      document.getElementById("start_date").min = today
-        .toISOString()
-        .substring(0, 10);
-      document.getElementById("start_date").max = oneMonthLater
-        .toISOString()
-        .substring(0, 10);
-      document.getElementById("end_date").value = today
-        .toISOString()
-        .substring(0, 10);
-      document.getElementById("end_date").min = today
-        .toISOString()
-        .substring(0, 10);
-      document.getElementById("end_date").max = oneMonthLater
-        .toISOString()
-        .substring(0, 10);
-
-      document
-        .getElementById("start_date")
-        .addEventListener("change", function () {
-          const startDateValue = this.value;
-          const endDateInput = document.getElementById("end_date");
-          const temp = new Date(startDateValue);
-          const endMax = new Date(startDateValue);
-
-          endDateInput.min = startDateValue;
-          endDateInput.value = startDateValue;
-          endMax.setDate(temp.getDate() + 6);
-          endDateInput.max = endMax.toISOString().substring(0, 10);
-
-          calculateAmount();
-        });
-
-      document
-        .getElementById("end_date")
-        .addEventListener("change", function () {
-          calculateAmount();
-        });
-
-      const ratingContainer = document.getElementById("review_rating");
-      const starsContainer = document.createElement("div");
-      starsContainer.classList.add("stars");
-
-      for (let i = 1; i <= 5; i++) {
-        const star = document.createElement("span");
-        star.classList.add("star");
-        star.textContent = "★";
-        if (i <= review_rating) {
-          star.classList.add("filled");
+        if (!startDate || !endDate || !paymentMethod) {
+          alert("모든 필드를 입력하세요.");
+          return;
         }
-        starsContainer.appendChild(star);
+
+        if (new Date(endDate) < new Date(startDate)) {
+          alert("종료 날짜는 시작 날짜보다 이전일 수 없습니다.");
+          return;
+        }
+
+        fetch("{% url 'booking' space.space_id %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: JSON.stringify({
+            start_date: startDate,
+            end_date: endDate,
+            payment_method: paymentMethod,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.text().then((text) => {
+                console.error("Response error:", text);
+                throw new Error("서버 오류: " + text);
+              });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            alert(data.message || "예약이 완료되었습니다!");
+            window.location.href = "{% url 'my_page' %}";
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
       }
 
       function calculateAmount() {
@@ -408,19 +304,18 @@
           const startDate = new Date(startDateValue);
           const endDate = new Date(endDateValue);
 
-          const differenceInTime = endDate - startDate + 1;
-          const differenceInDays = Math.ceil(
-            differenceInTime / (1000 * 60 * 60 * 24)
-          ); // 하루(밀리초 단위)로 나눔
+          const differenceInTime = endDate - startDate;
+          const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24)) + 1;
 
-          const totalPrice = differenceInDays * price_per_date;
-          document.getElementById(
-            "amount"
-          ).textContent = `총 가격: ${totalPrice.toLocaleString("ko-KR")}원`;
+          const pricePerDate = {{ space.price_per_date }};
+          const totalPrice = differenceInDays * pricePerDate;
+
+          document.getElementById("amount").textContent = `총 결제 금액: ${totalPrice.toLocaleString("ko-KR")}원`;
         }
       }
 
-      ratingContainer.appendChild(starsContainer);
+      document.getElementById("start_date").addEventListener("change", calculateAmount);
+      document.getElementById("end_date").addEventListener("change", calculateAmount);
     </script>
   </body>
 </html>

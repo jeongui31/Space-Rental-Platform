@@ -280,10 +280,16 @@ def booking(request, space_id):
         if not start_date or not end_date:
             return JsonResponse({'error': '날짜를 모두 입력하세요.'}, status=400)
 
-        if end_date <= start_date:
-            return JsonResponse({'error': '종료 날짜는 시작 날짜 이후여야 합니다.'}, status=400)
+        if end_date < start_date:
+            return JsonResponse({'error': '종료 날짜는 시작 날짜보다 이전일 수 없습니다.'}, status=400)
 
-        # 예약 저장
+        # Calculate rental days and total price
+        start_date_obj = date.fromisoformat(start_date)
+        end_date_obj = date.fromisoformat(end_date)
+        rental_days = (end_date_obj - start_date_obj).days + 1
+        total_price = rental_days * space.price_per_date
+
+        # Save the booking
         try:
             user = CustomUser.objects.get(email=request.user.username)
         except CustomUser.DoesNotExist:
@@ -297,9 +303,13 @@ def booking(request, space_id):
             booking_status='Pending',
         )
 
-        return JsonResponse({'message': '예약이 완료되었습니다!', 'booking_id': booking.booking_id})
+        return JsonResponse({
+            'message': f'예약이 완료되었습니다! 총 결제 금액은 {total_price:,}원입니다.',
+            'booking_id': booking.booking_id
+        })
 
     return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=405)
+
 
 from django.http import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
