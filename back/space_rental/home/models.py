@@ -73,3 +73,25 @@ class Booking(models.Model):
                 name='check_end_date_gt_start_date'
             ),
         ]
+        
+from django.db import models
+from django.utils.timezone import now
+from accounts.models import User
+
+
+class Review(models.Model):
+    review_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    space = models.ForeignKey('Space', on_delete=models.CASCADE)
+    review_rating = models.PositiveIntegerField(null=False)
+    comment = models.TextField(null=True, blank=True)
+    review_created_at = models.DateTimeField(default=now, null=False)
+
+    class Meta:
+        db_table = 'review'  # Specify the table name
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(review_rating__gte=1) & models.Q(review_rating__lte=5),
+                name='check_review_rating_range'
+            ),
+        ]
