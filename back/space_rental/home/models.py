@@ -112,3 +112,14 @@ class UserBookingView(models.Model):
     class Meta:
         managed = False  # Django가 데이터베이스를 관리하지 않음
         db_table = 'user_booking_view'  # 뷰 이름
+
+class Payment(models.Model):
+    payment_id = models.AutoField(primary_key=True)
+    booking = models.ForeignKey('Booking', on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField(null=False)  # Ensures amount >= 0
+    payment_method = models.CharField(max_length=20, null=False)
+    payment_status = models.CharField(max_length=20, null=False)
+    payment_created_at = models.DateTimeField(default=now, null=False)
+
+    class Meta:
+        db_table = 'payment'
