@@ -53,7 +53,7 @@ class SpaceWithCategories(models.Model):
 
     class Meta:
         managed = False  # Django가 데이터베이스를 관리하지 않음
-        db_table = 'space_with_categories'  # VIEW 이름
+        db_table = 'space_with_category_view'  # VIEW 이름
         
 class Booking(models.Model):
     booking_id = models.AutoField(primary_key=True)
