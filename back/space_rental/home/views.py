@@ -4,6 +4,8 @@ from accounts.models import User as CustomUser, Host
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from django.db.models import ObjectDoesNotExist
+from datetime import timedelta
+
 
 
 @login_required
@@ -265,12 +267,36 @@ from django.http import JsonResponse
 from home.models import Booking  # Booking 모델 임포트
 import json
 
+from datetime import timedelta, date
+
 @login_required
 def booking(request, space_id):
     space = get_object_or_404(Space, pk=space_id)
     if request.method == 'GET':
         today = date.today()
-        return render(request, 'booking.html', {'space': space, 'today': today})
+
+        # 예약된 날짜 가져오기 (Canceled 제외)
+        reserved_dates = Booking.objects.exclude(
+            booking_status='Canceled'
+        ).filter(
+            space=space,
+            booking_status__in=['Pending', 'Confirmed']
+        ).values('start_date', 'end_date')
+
+        # 날짜 범위를 리스트로 변환
+        disabled_dates = []
+        for booking in reserved_dates:
+            current_date = booking['start_date']
+            while current_date <= booking['end_date']:
+                disabled_dates.append(current_date.strftime('%Y-%m-%d'))
+                current_date += timedelta(days=1)
+
+        return render(request, 'booking.html', {
+            'space': space,
+            'today': today,
+            'disabled_dates': disabled_dates,
+        })
+
     elif request.method == 'POST':
         data = json.loads(request.body)
         start_date = data.get('start_date')
@@ -283,19 +309,13 @@ def booking(request, space_id):
         if end_date < start_date:
             return JsonResponse({'error': '종료 날짜는 시작 날짜보다 이전일 수 없습니다.'}, status=400)
 
-        # Calculate rental days and total price
-        start_date_obj = date.fromisoformat(start_date)
-        end_date_obj = date.fromisoformat(end_date)
-        rental_days = (end_date_obj - start_date_obj).days + 1
-        total_price = rental_days * space.price_per_date
-
-        # Save the booking
         try:
             user = CustomUser.objects.get(email=request.user.username)
         except CustomUser.DoesNotExist:
             return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=400)
 
-        booking = Booking.objects.create(
+        # 새로운 예약 생성
+        Booking.objects.create(
             user=user,
             space=space,
             start_date=start_date,
@@ -303,12 +323,9 @@ def booking(request, space_id):
             booking_status='Pending',
         )
 
-        return JsonResponse({
-            'message': f'예약이 완료되었습니다! 총 결제 금액은 {total_price:,}원입니다.',
-            'booking_id': booking.booking_id
-        })
+        return JsonResponse({'message': '예약이 완료되었습니다!'})
 
-    return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=405)
+
 
 
 from django.http import HttpResponseForbidden
@@ -350,3 +367,18 @@ def reject_booking(request, booking_id):
         except CustomUser.DoesNotExist:
             return HttpResponseForbidden("사용자를 찾을 수 없습니다.")
     return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=405)
+
+@login_required
+def update_booking_status(request, booking_id, status):
+    booking = get_object_or_404(Booking, pk=booking_id)
+
+    if booking.booking_status == 'Pending' and status == 'Canceled':
+        booking.booking_status = 'Canceled'
+        booking.save()
+        return JsonResponse({'message': '예약이 거절되었습니다. 날짜가 다시 예약 가능 상태로 변경되었습니다.'})
+    elif status == 'Confirmed':
+        booking.booking_status = 'Confirmed'
+        booking.save()
+        return JsonResponse({'message': '예약이 승인되었습니다.'})
+    else:
+        return JsonResponse({'error': '잘못된 상태 업데이트 요청입니다.'}, status=400)

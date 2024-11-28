@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Space-Rental-Platform</title>
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+    <!-- Flatpickr CSS 추가 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
     <style>
       .body-wrapper {
         font-size: 14px;
@@ -74,42 +79,6 @@
         font-weight: bold;
       }
 
-      .review-wrapper {
-        display: flex;
-        flex-direction: column;
-        width: 740px;
-        height: 600px;
-        padding: 30px;
-        border-top: 1px solid rgb(87, 87, 87);
-        justify-content: start;
-      }
-
-      .review {
-        border: 1px solid #ccc;
-        border-radius: 7px;
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        padding: 10px;
-        margin-top: 40px;
-        font-size: 16px;
-      }
-
-      .stars {
-        display: flex;
-        flex-direction: row;
-      }
-
-      .star {
-        font-size: 20px;
-        color: lightgray;
-        margin-right: 4px;
-      }
-
-      .star.filled {
-        color: gold;
-      }
-
       button {
         font-size: 20px;
         font-weight: bold;
@@ -158,10 +127,10 @@
       <div class="rightside">
         <div class="booking-wrapper">
           <label for="start_date">대여 시작 날짜 </label>
-          <input type="date" id="start_date" min="{{ today|date:'Y-m-d' }}" />
+          <input type="text" id="start_date" />
 
           <label for="end_date">대여 종료 날짜 </label>
-          <input type="date" id="end_date" min="{{ today|date:'Y-m-d' }}" />
+          <input type="text" id="end_date" />
 
           <span>결제 방식</span>
           <div
@@ -174,14 +143,7 @@
               name="payment_method"
               value="Credit Card"
             />
-            <label
-              for="credit_card"
-              style="
-                margin-right: 15px;
-                font-size: 16px;
-                color: darkslateblue;
-                font-weight: bold;
-              "
+            <label for="credit_card" style="margin-right: 15px"
               >Credit Card</label
             >
 
@@ -191,14 +153,7 @@
               name="payment_method"
               value="Debit Card"
             />
-            <label
-              for="debit_card"
-              style="
-                margin-right: 15px;
-                font-size: 16px;
-                color: darkslateblue;
-                font-weight: bold;
-              "
+            <label for="debit_card" style="margin-right: 15px"
               >Debit Card</label
             >
 
@@ -208,14 +163,7 @@
               name="payment_method"
               value="Bank Transfer"
             />
-            <label
-              for="bank_transfer"
-              style="
-                margin-right: 15px;
-                font-size: 16px;
-                color: darkslateblue;
-                font-weight: bold;
-              "
+            <label for="bank_transfer" style="margin-right: 15px"
               >Bank Transfer</label
             >
 
@@ -225,11 +173,7 @@
               name="payment_method"
               value="Mobile Payment"
             />
-            <label
-              for="mobile_payment"
-              style="font-size: 16px; color: darkslateblue; font-weight: bold"
-              >Mobile Payment</label
-            >
+            <label for="mobile_payment">Mobile Payment</label>
           </div>
 
           <span>총 결제 금액 :</span>
@@ -250,72 +194,98 @@
         </div>
       </div>
     </div>
+    <!-- Flatpickr JS 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-      function submitBooking() {
-        const startDate = document.getElementById("start_date").value;
-        const endDate = document.getElementById("end_date").value;
-        const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
+      document.addEventListener("DOMContentLoaded", function () {
+        const disabledDates = {{ disabled_dates|safe }};
+        const pricePerDay = {{ space.price_per_date }};
 
-        if (!startDate || !endDate || !paymentMethod) {
-          alert("모든 필드를 입력하세요.");
-          return;
-        }
+        // Flatpickr 달력 초기화
+        flatpickr("#start_date", {
+          disable: disabledDates,
+          dateFormat: "Y-m-d",
+          minDate: "{{ today|date:'Y-m-d' }}",
+          onChange: calculateTotalAmount,
+        });
 
-        if (new Date(endDate) < new Date(startDate)) {
-          alert("종료 날짜는 시작 날짜보다 이전일 수 없습니다.");
-          return;
-        }
+        flatpickr("#end_date", {
+          disable: disabledDates,
+          dateFormat: "Y-m-d",
+          minDate: "{{ today|date:'Y-m-d' }}",
+          onChange: calculateTotalAmount,
+        });
 
-        fetch("{% url 'booking' space.space_id %}", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}",
-          },
-          body: JSON.stringify({
-            start_date: startDate,
-            end_date: endDate,
-            payment_method: paymentMethod,
-          }),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              return response.text().then((text) => {
-                console.error("Response error:", text);
-                throw new Error("서버 오류: " + text);
-              });
+        // 총 결제 금액 계산
+        function calculateTotalAmount() {
+          const startDate = document.getElementById("start_date").value;
+          const endDate = document.getElementById("end_date").value;
+
+          if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (end >= start) {
+              const diffInDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+              const totalAmount = diffInDays * pricePerDay;
+              document.getElementById("amount").textContent = `총 결제 금액: ${totalAmount.toLocaleString()}원`;
+            } else {
+              document.getElementById("amount").textContent = "총 결제 금액: 0원";
             }
-            return response.json();
-          })
-          .then((data) => {
-            alert(data.message || "예약이 완료되었습니다!");
-            window.location.href = "{% url 'my_page' %}";
-          })
-          .catch((error) => {
-            alert(error.message);
-          });
-      }
-
-      function calculateAmount() {
-        const startDateValue = document.getElementById("start_date").value;
-        const endDateValue = document.getElementById("end_date").value;
-
-        if (startDateValue && endDateValue) {
-          const startDate = new Date(startDateValue);
-          const endDate = new Date(endDateValue);
-
-          const differenceInTime = endDate - startDate;
-          const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24)) + 1;
-
-          const pricePerDate = {{ space.price_per_date }};
-          const totalPrice = differenceInDays * pricePerDate;
-
-          document.getElementById("amount").textContent = `총 결제 금액: ${totalPrice.toLocaleString("ko-KR")}원`;
+          } else {
+            document.getElementById("amount").textContent = "총 결제 금액: 0원";
+          }
         }
-      }
 
-      document.getElementById("start_date").addEventListener("change", calculateAmount);
-      document.getElementById("end_date").addEventListener("change", calculateAmount);
+        // 결제 요청 처리
+        function submitBooking() {
+          const startDate = document.getElementById("start_date").value;
+          const endDate = document.getElementById("end_date").value;
+          const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
+
+          if (!startDate || !endDate || !paymentMethod) {
+            alert("모든 필드를 입력하세요.");
+            return;
+          }
+
+          if (new Date(endDate) < new Date(startDate)) {
+            alert("종료 날짜는 시작 날짜보다 이전일 수 없습니다.");
+            return;
+          }
+
+          fetch("{% url 'booking' space.space_id %}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({
+              start_date: startDate,
+              end_date: endDate,
+              payment_method: paymentMethod,
+            }),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.text().then((text) => {
+                  console.error("Response error:", text);
+                  throw new Error("서버 오류: " + text);
+                });
+              }
+              return response.json();
+            })
+            .then((data) => {
+              alert(data.message || "예약이 완료되었습니다!");
+              window.location.href = "{% url 'my_page' %}";
+            })
+            .catch((error) => {
+              alert(error.message);
+            });
+        }
+
+        // 버튼 클릭 이벤트 연결
+        document.getElementById("booking-btn").addEventListener("click", submitBooking);
+      });
     </script>
   </body>
 </html>
