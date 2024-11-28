@@ -10,7 +10,11 @@ from datetime import timedelta
 
 @login_required
 def home(request):
-    places = Space.objects.all()  # 모든 장소를 가져옴
+    search_txt = request.GET.get('search_txt', '')
+    if search_txt:
+        places = Space.objects.filter(space_name__icontains=search_txt)
+    else:
+        places = Space.objects.all()  # 모든 장소를 가져옴
     return render(request, 'home.html', {'places': places})
 
 @login_required
