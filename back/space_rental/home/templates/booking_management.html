@@ -30,6 +30,7 @@
       }
       .booking-item button {
         padding: 5px 10px;
+        margin: 5px;
         background-color: darkslateblue;
         color: white;
         border: none;
@@ -38,6 +39,12 @@
       }
       .booking-item button:hover {
         background-color: slateblue;
+      }
+      .booking-item button.reject {
+        background-color: crimson;
+      }
+      .booking-item button.reject:hover {
+        background-color: darkred;
       }
     </style>
   </head>
@@ -60,6 +67,22 @@
           시작일: {{ booking.start_date }}<br />
           종료일: {{ booking.end_date }}<br />
           상태: {{ booking.booking_status }}<br />
+          {% if booking.booking_status == 'Pending' %}
+          <form
+            method="post"
+            action="{% url 'accept_booking' booking.booking_id %}"
+          >
+            {% csrf_token %}
+            <button type="submit">예약 수락</button>
+          </form>
+          <form
+            method="post"
+            action="{% url 'reject_booking' booking.booking_id %}"
+          >
+            {% csrf_token %}
+            <button type="submit" class="reject">예약 거절</button>
+          </form>
+          {% endif %}
         </li>
         {% endfor %}
       </ul>

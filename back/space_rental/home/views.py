@@ -300,3 +300,43 @@ def booking(request, space_id):
         return JsonResponse({'message': '예약이 완료되었습니다!', 'booking_id': booking.booking_id})
 
     return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=405)
+
+from django.http import HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
+
+@login_required
+@csrf_exempt
+def accept_booking(request, booking_id):
+    if request.method == 'POST':
+        try:
+            user = CustomUser.objects.get(email=request.user.username)
+            if user.role.lower() != 'host':
+                return HttpResponseForbidden("권한이 없습니다.")
+            
+            booking = get_object_or_404(Booking, pk=booking_id)
+            if booking.booking_status == 'Pending':
+                booking.booking_status = 'Confirmed'
+                booking.save()
+            return redirect('booking_management')
+        except CustomUser.DoesNotExist:
+            return HttpResponseForbidden("사용자를 찾을 수 없습니다.")
+    return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=405)
+
+
+@login_required
+@csrf_exempt
+def reject_booking(request, booking_id):
+    if request.method == 'POST':
+        try:
+            user = CustomUser.objects.get(email=request.user.username)
+            if user.role.lower() != 'host':
+                return HttpResponseForbidden("권한이 없습니다.")
+            
+            booking = get_object_or_404(Booking, pk=booking_id)
+            if booking.booking_status == 'Pending':
+                booking.booking_status = 'Canceled'
+                booking.save()
+            return redirect('booking_management')
+        except CustomUser.DoesNotExist:
+            return HttpResponseForbidden("사용자를 찾을 수 없습니다.")
+    return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=405)
