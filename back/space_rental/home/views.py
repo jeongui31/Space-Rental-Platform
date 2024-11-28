@@ -11,11 +11,30 @@ from datetime import timedelta
 @login_required
 def home(request):
     search_txt = request.GET.get('search_txt', '')
-    if search_txt:
+    category_id = request.GET.get('category', '')
+
+    places = Space.objects.all()  # 모든 장소를 가져옴
+
+    if search_txt and category_id:
+        places = Space.objects.filter(
+            space_name__icontains=search_txt,
+            space_id__in=SpaceCategoryMapping.objects.filter(category_id=category_id).values('space_id')
+        )
+
+    elif search_txt:
         places = Space.objects.filter(space_name__icontains=search_txt)
-    else:
-        places = Space.objects.all()  # 모든 장소를 가져옴
-    return render(request, 'home.html', {'places': places})
+
+    elif category_id:
+        places = Space.objects.filter(space_id__in=SpaceCategoryMapping.objects.filter(category_id=category_id).values('space_id'))
+       
+    categories = SpaceCategory.objects.all()
+    
+    return render(request, 'home.html', {
+        'places': places,
+        'categories': categories,
+        'search_txt': search_txt,
+        'selected_category': category_id,
+        })
 
 @login_required
 def my_page(request):

@@ -37,13 +37,35 @@
             font-size: 16px;
             margin: 5px 0;
         }
+
+        .category-btn-wrapper {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            justify-self: center;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            margin-left: 20px;
+            border: 1px solid darkslateblue;
+            border-radius: 8px;
+            background-color: white;
+            color: darkslateblue;
+            cursor: pointer;
+        }
+
+        .category-btn:hover {
+            background-color: darkslateblue;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>SRP</h1>
         <form class="search-box" action="" method="get">
-            <input class="search-txt" type="text" name="search_txt" placeholder="검색어를 입력하세요.">
+            <input class="search-txt" type="text" name="search_txt" placeholder="검색어를 입력하세요." value="{{ search_txt|default:''}}">
             <button class="search-btn" type="submit">
                 <i class="fas fa-search"></i>
             </button>
@@ -62,6 +84,18 @@
         {% endif %}
     </header>
     <hr/>
+    <div class="category-btn-wrapper">
+        <div id="categories" style="display: flex; flex-direction: row">
+            {% for category in categories %}
+            <button class="category-btn" onclick="filterByCategory('{{ category.category_id }}')"
+            style="{% if category.category_id|stringformat:'s' == selected_category %}background-color: darkslateblue; color: white;{% else %}background-color: white; color: darkslateblue;{% endif %}"
+            >
+        {{ category.category_name }}
+    </button>
+            <br />
+            {% endfor %}
+          </div>
+    </div>
     <main>
         {% if user.is_authenticated %}
         <div class="place-list">
@@ -85,6 +119,15 @@
     <footer>
 
     </footer>
-    <script src="{% static 'assets/js/main_page.js' %}"></script>
+    <script>
+        function filterByCategory(category_id) {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            urlParams.set('category', category_id);
+
+            window.location.search = urlParams.toString();
+        }
+
+    </script>
 </body>
 </html>
