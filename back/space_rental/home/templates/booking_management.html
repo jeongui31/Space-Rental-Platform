@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>예약 처리</title>
+    <title>예약 관리</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -23,6 +23,11 @@
         border: 1px solid #ddd;
         border-radius: 5px;
       }
+      .booking-item img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+      }
       .booking-item button {
         padding: 5px 10px;
         background-color: darkslateblue;
@@ -38,15 +43,23 @@
   </head>
   <body>
     <div class="booking-wrapper">
-      <h3>예약 처리</h3>
+      <h3>예약 관리</h3>
       {% if bookings %}
       <ul>
         {% for booking in bookings %}
         <li class="booking-item">
-          <strong>{{ booking.title }}</strong><br />
-          {{ booking.details }}<br />
-          <button type="button">승인</button>
-          <button type="button">거부</button>
+          <strong>사용자 정보:</strong><br />
+          이름: {{ booking.user_name }}<br />
+          이메일: {{ booking.email }}<br />
+          전화번호: {{ booking.phone }}<br /><br />
+          <strong>공간 정보:</strong><br />
+          이름: {{ booking.space_name }}<br />
+          <img src="{{ booking.image }}" alt="공간 이미지" /><br />
+          주소: {{ booking.address }}<br /><br />
+          <strong>예약 날짜:</strong><br />
+          시작일: {{ booking.start_date }}<br />
+          종료일: {{ booking.end_date }}<br />
+          상태: {{ booking.booking_status }}<br />
         </li>
         {% endfor %}
       </ul>

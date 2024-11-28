@@ -95,3 +95,19 @@ class Review(models.Model):
                 name='check_review_rating_range'
             ),
         ]
+
+class UserBookingView(models.Model):
+    booking_id = models.IntegerField(primary_key=True)
+    user_name = models.CharField(max_length=15)
+    email = models.EmailField(max_length=50)
+    phone = models.CharField(max_length=15)
+    space_name = models.CharField(max_length=200)
+    image = models.URLField(null=True, blank=True)
+    address = models.CharField(max_length=200)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    booking_status = models.CharField(max_length=20)
+
+    class Meta:
+        managed = False  # Django가 데이터베이스를 관리하지 않음
+        db_table = 'user_booking_view'  # 뷰 이름

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories
+from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories, UserBookingView
 from accounts.models import User as CustomUser, Host
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
@@ -183,13 +183,14 @@ def booking_management(request):
     except CustomUser.DoesNotExist:
         return render(request, 'my_page.html', {'error': '사용자를 찾을 수 없습니다.'})
 
-    # 예약 처리 관련 데이터 가져오기
-    if user.role.lower() == 'host':
-        bookings = []  # 예약 데이터 로드 로직 추가
-    else:
+    if user.role.lower() != 'host':
         return redirect('my_page')  # 호스트가 아닌 경우 접근 금지
 
+    # SQL 뷰에서 데이터 가져오기
+    bookings = UserBookingView.objects.all()
+
     return render(request, 'booking_management.html', {'bookings': bookings})
+
 
 @login_required
 def edit_user_info(request):
