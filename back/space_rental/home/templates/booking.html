@@ -190,14 +190,7 @@
             총 결제 금액: 0원
           </div>
 
-          {% if user.role == "guest" %}
           <button id="booking-btn" onclick="submitBooking()">결제하기</button>
-          {% else %}
-          <br />
-          <p style="color: red; font-weight: bold">
-            호스트는 예약할 수 없습니다.
-          </p>
-          {% endif %}
         </div>
       </div>
     </div>
