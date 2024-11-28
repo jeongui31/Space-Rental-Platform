@@ -295,6 +295,7 @@ from datetime import timedelta, date
 @login_required
 def booking(request, space_id):
     space = get_object_or_404(Space, pk=space_id)
+    user = request.user
     if request.method == 'GET':
         today = date.today()
 
@@ -314,10 +315,17 @@ def booking(request, space_id):
                 disabled_dates.append(current_date.strftime('%Y-%m-%d'))
                 current_date += timedelta(days=1)
 
+        try:
+            custom_user = CustomUser.objects.get(email=user.username)
+            user_role = custom_user.role.lower()  # Convert to lowercase for consistency
+        except CustomUser.DoesNotExist:
+            user_role = None
+            
         return render(request, 'booking.html', {
             'space': space,
             'today': today,
             'disabled_dates': disabled_dates,
+            'user_role': user_role,
         })
 
     elif request.method == 'POST':
