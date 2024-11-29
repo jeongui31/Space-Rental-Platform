@@ -5,6 +5,7 @@ from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from django.db.models import ObjectDoesNotExist
 from datetime import timedelta
+from django.db import transaction
 
 
 
@@ -161,31 +162,36 @@ def update_space(request, space_id):
         return redirect('my_page')  # 권한이 없으면 마이페이지로 리디렉션
 
     if request.method == 'POST':
-        # 폼 데이터 가져오기
-        space_name = request.POST.get('space_name')
-        description = request.POST.get('description', '')
-        address = request.POST.get('address')
-        capacity = request.POST.get('capacity')
-        price_per_date = request.POST.get('price_per_date')
-        category_ids = request.POST.getlist('category_name')  # 수정된 카테고리 ID 가져오기
-
-        # 공간 정보 업데이트
-        space.space_name = space_name
-        space.description = description
-        space.address = address
-        space.capacity = int(capacity)
-        space.price_per_date = int(price_per_date)
-        space.save()
-
-        # 기존 카테고리 매핑 삭제 및 새로운 매핑 추가
-        SpaceCategoryMapping.objects.filter(space=space).delete()
-        for category_id in category_ids:
+        with transaction.atomic():
             try:
-                category = SpaceCategory.objects.get(category_id=category_id)
-                SpaceCategoryMapping.objects.create(space=space, category=category)
-            except SpaceCategory.DoesNotExist:
-                continue
+                # 폼 데이터 가져오기
+                space_name = request.POST.get('space_name')
+                description = request.POST.get('description', '')
+                address = request.POST.get('address')
+                capacity = request.POST.get('capacity')
+                price_per_date = request.POST.get('price_per_date')
+                category_ids = request.POST.getlist('category_name')  # 수정된 카테고리 ID 가져오기
 
+                # 공간 정보 업데이트
+                space.space_name = space_name
+                space.description = description
+                space.address = address
+                space.capacity = int(capacity)
+                space.price_per_date = int(price_per_date)
+                space.save()
+
+                # 기존 카테고리 매핑 삭제 및 새로운 매핑 추가
+                SpaceCategoryMapping.objects.filter(space=space).delete()
+                for category_id in category_ids:
+                    try:
+                        category = SpaceCategory.objects.get(category_id=category_id)
+                        SpaceCategoryMapping.objects.create(space=space, category=category)
+                    except SpaceCategory.DoesNotExist:
+                        continue
+            except Exception as e:
+                transaction.set_rollback(True)
+                return redirect('space_reg', {'error':f'정보 수정 중 오류가 발생했습니다: {str (e)}'})
+            
         return redirect('space_reg')  # 수정 완료 후 마이페이지로 리디렉션
 
     # GET 요청: 공간 정보 수정 폼 표시
@@ -248,30 +254,35 @@ def edit_user_info(request):
         return render(request, 'edit_user_info.html', context)
 
     elif request.method == 'POST':
-        user.user_name = request.POST.get('user_name', user.user_name)
-        user.phone = request.POST.get('phone', user.phone)
-
-        new_password = request.POST.get('password')
-        if new_password:
-            user.password = new_password
-
-        user.save()
-
-        if user.role.lower() == 'host':
-            company_name = request.POST.get('company_name', '')
-            business_license = request.POST.get('business_license', '')
-
+        with transaction.atomic():
             try:
-                host = Host.objects.get(user=user)
-                host.company_name = company_name
-                host.business_license = business_license
-                host.save()
-            except ObjectDoesNotExist:
-                Host.objects.create(
-                    user=user,
-                    company_name=company_name,
-                    business_license=business_license
-                )
+                user.user_name = request.POST.get('user_name', user.user_name)
+                user.phone = request.POST.get('phone', user.phone)
+
+                new_password = request.POST.get('password')
+                if new_password:
+                    user.password = new_password
+
+                user.save()
+
+                if user.role.lower() == 'host':
+                    company_name = request.POST.get('company_name', '')
+                    business_license = request.POST.get('business_license', '')
+
+                    try:
+                        host = Host.objects.get(user=user)
+                        host.company_name = company_name
+                        host.business_license = business_license
+                        host.save()
+                    except ObjectDoesNotExist:
+                        Host.objects.create(
+                            user=user,
+                            company_name=company_name,
+                            business_license=business_license
+                        )
+            except Exception as e:
+                transaction.set_rollback(True)
+                return render(request, 'edit_user_info.html', {'error': f'정보 수정 중 오류가 발생했습니다: {str(e)}'})
 
         return redirect('my_page')  # 수정 완료 후 마이페이지로 리디렉션
 
