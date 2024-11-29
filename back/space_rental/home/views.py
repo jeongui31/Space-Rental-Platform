@@ -87,53 +87,60 @@ def space_reg(request):
         image_file = request.FILES.get('image')  # HTML 폼의 이미지 필드
         image_url = None
 
-        if image_file:
-            # Imgbb API에 이미지 업로드
-            imgbb_api_key = "afacb4ce431ff6c3171943864161107f"  # 여기에 Imgbb API 키 입력
-            imgbb_endpoint = "https://api.imgbb.com/1/upload"
-
+        with transaction.atomic():
             try:
-                response = requests.post(
-                    imgbb_endpoint,
-                    data={'key': imgbb_api_key},
-                    files={'image': image_file}
+
+                if image_file:
+                    # Imgbb API에 이미지 업로드
+                    imgbb_api_key = "afacb4ce431ff6c3171943864161107f"  # 여기에 Imgbb API 키 입력
+                    imgbb_endpoint = "https://api.imgbb.com/1/upload"
+
+                    try:
+                        response = requests.post(
+                            imgbb_endpoint,
+                            data={'key': imgbb_api_key},
+                            files={'image': image_file}
+                        )
+                        if response.status_code == 200:
+                            image_url = response.json().get('data', {}).get('url')  # 업로드된 이미지 URL
+                        else:
+                            print("Imgbb API Error:", response.json())
+                    except Exception as e:
+                        print("Image upload failed:", e)
+
+                # 현재 로그인한 사용자 가져오기
+                auth_user = request.user
+                try:
+                    user = CustomUser.objects.get(email=auth_user.username)
+                except CustomUser.DoesNotExist:
+                    return render(request, 'my_page.html', {'error': '사용자를 찾을 수 없습니다.'})
+
+                # Space 객체 생성 및 저장
+                space = Space(
+                    space_name=space_name,
+                    description=description,
+                    address=address,
+                    capacity=int(capacity),
+                    price_per_date=int(price_per_date),
+                    user=user,
+                    image=image_url,  # 이미지 URL 저장
                 )
-                if response.status_code == 200:
-                    image_url = response.json().get('data', {}).get('url')  # 업로드된 이미지 URL
-                else:
-                    print("Imgbb API Error:", response.json())
+                space.save()
+
+                # SpaceCategoryMapping 생성
+                for category_id in category_ids:
+                    try:
+                        category = SpaceCategory.objects.get(category_id=category_id)
+                        mapping = SpaceCategoryMapping(space=space, category=category)
+                        mapping.save()
+                    except SpaceCategory.DoesNotExist:
+                        continue  # 유효하지 않은 카테고리는 무시
             except Exception as e:
-                print("Image upload failed:", e)
+                return render(request, 'space_reg.html',{
+                    'error':f'공간 등록 중 오료가 발생했습니다: {str(e)}'
+                })
 
-        # 현재 로그인한 사용자 가져오기
-        auth_user = request.user
-        try:
-            user = CustomUser.objects.get(email=auth_user.username)
-        except CustomUser.DoesNotExist:
-            return render(request, 'my_page.html', {'error': '사용자를 찾을 수 없습니다.'})
-
-        # Space 객체 생성 및 저장
-        space = Space(
-            space_name=space_name,
-            description=description,
-            address=address,
-            capacity=int(capacity),
-            price_per_date=int(price_per_date),
-            user=user,
-            image=image_url,  # 이미지 URL 저장
-        )
-        space.save()
-
-        # SpaceCategoryMapping 생성
-        for category_id in category_ids:
-            try:
-                category = SpaceCategory.objects.get(category_id=category_id)
-                mapping = SpaceCategoryMapping(space=space, category=category)
-                mapping.save()
-            except SpaceCategory.DoesNotExist:
-                continue  # 유효하지 않은 카테고리는 무시
-
-        return redirect('space_reg')  # 등록 후 다시 공간 등록 페이지로 리디렉션
+            return redirect('space_reg')  # 등록 후 다시 공간 등록 페이지로 리디렉션
 
     # GET 요청: 로그인한 사용자가 등록한 공간 가져오기
     auth_user = request.user
