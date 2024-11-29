@@ -30,11 +30,6 @@ class Host(models.Model):
         max_length=30,
         unique=True 
     )
-    host_rating = models.DecimalField(
-        max_digits=3,  # 최대 자릿수 (소수점 포함)
-        decimal_places=2,  # 소수점 아래 두 자리
-        default=0.00  # 기본값 0.00
-    )
 
     class Meta:
         managed = True
