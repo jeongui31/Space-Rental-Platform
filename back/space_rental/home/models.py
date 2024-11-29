@@ -154,3 +154,11 @@ class Payment(models.Model):
 
     class Meta:
         db_table = 'payment'
+
+class SpaceReviewAvg(models.Model):
+    space = models.OneToOneField(Space, primary_key=True, on_delete=models.DO_NOTHING, db_column='space_id')
+    average_rating = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'space_review_avg_view'

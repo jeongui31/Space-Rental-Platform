@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories, UserBookingView, Payment, Review
+from home.models import Space, SpaceCategory, SpaceCategoryMapping, SpaceWithCategories, UserBookingView, Payment, Review, SpaceReviewAvg
 from accounts.models import User as CustomUser, Host
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
@@ -289,20 +289,21 @@ def edit_user_info(request):
 @login_required
 def space_detail(request, space_id):
     space = get_object_or_404(Space, pk=space_id)
-    reviews = Review.objects.filter(space=space)
-    temp_total = 0
-    for i in reviews:
-        temp_total = temp_total + i.review_rating
+    review_avg = SpaceReviewAvg.objects.filter(space_id=space_id).first()
+    reviews = Review.objects.filter(space=space).order_by('-review_created_at')
+    # temp_total = 0
+    # for i in reviews:
+    #     temp_total = temp_total + i.review_rating
 
-    if not reviews:
-        review_avg = 0.00
-    else:
-        review_avg = temp_total / len(reviews)
+    # if not reviews:
+    #     review_avg = 0.00
+    # else:
+    #     review_avg = temp_total / len(reviews)
 
     context = {
         'space': space,
         'reviews': reviews,
-        'review_avg': review_avg
+        'review_avg': round(review_avg.average_rating, 2) if review_avg else 0.00
     }
     return render(request, 'space_detail.html', context)
 
