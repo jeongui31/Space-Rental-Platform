@@ -95,7 +95,12 @@ class Review(models.Model):
                 check=models.Q(review_rating__gte=1) & models.Q(review_rating__lte=5),
                 name='check_review_rating_range'
             ),
+            models.UniqueConstraint(
+                fields=['user', 'space'],
+                name='unique_user_space_review'
+            ),
         ]
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.update_host_rating()
