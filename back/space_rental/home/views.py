@@ -378,23 +378,28 @@ def booking(request, space_id):
         end_date_obj = date.fromisoformat(end_date)
         total_days = (end_date_obj - start_date_obj).days + 1
         total_amount = total_days * space.price_per_date
+        with transaction.atomic():
+            try:
 
-        # Create a new booking
-        booking = Booking.objects.create(
-            user=user,
-            space=space,
-            start_date=start_date,
-            end_date=end_date,
-            booking_status='Pending',
-        )
+                # Create a new booking
+                booking = Booking.objects.create(
+                    user=user,
+                    space=space,
+                    start_date=start_date,
+                    end_date=end_date,
+                    booking_status='Pending',
+                )
 
-        # Create a payment record linked to the booking
-        Payment.objects.create(
-            booking=booking,
-            amount=total_amount,
-            payment_method=payment_method,
-            payment_status='Success',  # Default status
-        )
+                # Create a payment record linked to the booking
+                Payment.objects.create(
+                    booking=booking,
+                    amount=total_amount,
+                    payment_method=payment_method,
+                    payment_status='Success',  # Default status
+                )
+            except Exception as e:
+                transaction.rollback()
+                return JsonResponse({'error': str(e)}, status=400)
 
         return JsonResponse({'message': '예약과 결제가 완료되었습니다!'})
 
