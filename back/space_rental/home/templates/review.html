@@ -119,6 +119,11 @@
         <div class="space-name" id="space_name" style="margin-bottom: 10px;">{{ space.space_name }}</div> 
         <div class="address" id="address" style="font-size: 20px;">{{ space.address }}</div>
     </div>
+    {% if error_message %}
+    <div class="error-msg", style="position: absolute; top: 100px; color: red;">
+      {{ error_message }}
+    </div>
+    {% endif %}
     <form method="post">
         <label for="review_rating" style="margin-bottom: 10px;">별점:</label>
         <div class="review-raitng-btn-wrapper">

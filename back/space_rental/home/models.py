@@ -73,6 +73,9 @@ class Booking(models.Model):
                 name='check_end_date_gte_start_date'  # 새로운 제약 조건 이름
             ),
         ]
+    @property
+    def isReviewed(self):
+        return Review.objects.filter(booking=self).exists()
 
         
 from django.db import models
@@ -82,6 +85,7 @@ from accounts.models import User
 
 class Review(models.Model):
     review_id = models.AutoField(primary_key=True)
+    booking = models.OneToOneField('Booking', on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     space = models.ForeignKey('Space', on_delete=models.CASCADE)
     review_rating = models.PositiveIntegerField(null=False)
@@ -95,43 +99,7 @@ class Review(models.Model):
                 check=models.Q(review_rating__gte=1) & models.Q(review_rating__lte=5),
                 name='check_review_rating_range'
             ),
-            models.UniqueConstraint(
-                fields=['user', 'space'],
-                name='unique_user_space_review'
-            ),
         ]
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.update_host_rating()
-
-    def delete(self, *args, **kwargs):
-        host = self.get_host()
-        super().delete(*args, **kwargs)
-        if host:
-            self.update_host_rating(host)
-
-    def get_host(self):
-        space = self.space
-        host = Host.objects.filter(user=space.user).first()
-        return host
-    
-    def update_host_rating(self, host=None):
-        if not host:
-            host = self.get_host()
-        if not host:
-            return
-
-        spaces = Space.objects.filter(user=host.user)
-        reviews = Review.objects.filter(space__in=spaces)
-
-        if reviews.exists():
-            average_rating = reviews.aggregate(avg_rating=models.Avg('review_rating'))['avg_rating']
-            host.host_rating = round(average_rating, 2)
-        else:
-            host.host_rating = 0.00
-        
-        host.save()
 
 class UserBookingView(models.Model):
     booking_id = models.IntegerField(primary_key=True)

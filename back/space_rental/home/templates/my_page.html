@@ -161,7 +161,7 @@
             <p><strong>시작 날짜:</strong> {{ reservation.start_date }}</p>
             <p><strong>종료 날짜:</strong> {{ reservation.end_date }}</p>
             <p><strong>상태:</strong> {{ reservation.booking_status }}</p>
-            {% if reservation.booking_status == "Confirmed" %}
+            {% if reservation.booking_status == "Confirmed" and not reservation.isReviewed %}
             <form
             method= "GET"
             action="{% url 'review' reservation.booking_id %}"

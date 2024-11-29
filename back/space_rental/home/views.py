@@ -487,19 +487,31 @@ def review(request, booking_id):
     user = CustomUser.objects.get(email=request.user.username)
     booking = get_object_or_404(Booking, booking_id=booking_id)
     space = booking.space
+
+    if booking.user != user:
+        return render(request, 'review.html', {'space': space, 'error_message': '해당 예약에 대해 리뷰를 작성할 권한이 없습니다.'})
+
+    if Review.objects.filter(booking=booking).exists():
+        return render(request, 'review.html', {'space': space, 'error_message': '해당 예약에 대해 이미 리뷰를 작성하셨습니다.'})
+
     if request.method == 'GET':
     
         return render(request, 'review.html', {'space': space})
 
     if request.method == 'POST':
-        review_rating = request.POST.get('review_rating', 5)
-        comment = request.POST.get('comment')
+        try:
+            review_rating = request.POST.get('review_rating', 5)
+            comment = request.POST.get('comment')
 
-        Review.objects.create(
-            user=user,
-            space=space,
-            review_rating=review_rating,
-            comment=comment,
-        )
+            Review.objects.create(
+                user=user,
+                space=space,
+                review_rating=review_rating,
+                comment=comment,
+                booking=booking
+            )
 
-        return redirect('my_page')
+            return redirect('my_page')
+        except Exception as e:
+            return render(request, 'review.html', {'space': space,'error_message':"리뷰를 저정하는 중 오류가 발생했습니다."
+            })
