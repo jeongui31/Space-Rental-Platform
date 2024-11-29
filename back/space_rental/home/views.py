@@ -379,6 +379,17 @@ def booking(request, space_id):
         total_days = (end_date_obj - start_date_obj).days + 1
         total_amount = total_days * space.price_per_date
         with transaction.atomic():
+            # 락 설정
+            bookings_for_update = Booking.objects.filter(
+                space=space,
+                booking_status__in=['Pending', 'Confirm'],
+                end_date__gte=start_date_obj,
+                start_date__lte=end_date_obj
+            ).select_for_update()
+
+            if bookings_for_update.exists():
+                return JsonResponse({'error':'선택한 날짜에 이미 예약이 있습니다.'}, status=400)
+
             try:
 
                 # Create a new booking
