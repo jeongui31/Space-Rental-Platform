@@ -297,15 +297,12 @@ def edit_user_info(request):
 def space_detail(request, space_id):
     space = get_object_or_404(Space, pk=space_id)
     review_avg = SpaceReviewAvg.objects.filter(space_id=space_id).first()
-    reviews = Review.objects.filter(space=space).order_by('-review_created_at')
-    # temp_total = 0
-    # for i in reviews:
-    #     temp_total = temp_total + i.review_rating
+    bookings = Booking.objects.filter(space=space)
+    reviews = []
 
-    # if not reviews:
-    #     review_avg = 0.00
-    # else:
-    #     review_avg = temp_total / len(reviews)
+    for booking in bookings:
+        related_reviews = Review.objects.filter(booking=booking)
+        reviews.extend(related_reviews)
 
     context = {
         'space': space,
@@ -505,7 +502,6 @@ def review(request, booking_id):
 
             Review.objects.create(
                 user=user,
-                space=space,
                 review_rating=review_rating,
                 comment=comment,
                 booking=booking

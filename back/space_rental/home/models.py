@@ -87,7 +87,6 @@ class Review(models.Model):
     review_id = models.AutoField(primary_key=True)
     booking = models.OneToOneField('Booking', on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    space = models.ForeignKey('Space', on_delete=models.CASCADE)
     review_rating = models.PositiveIntegerField(null=False)
     comment = models.TextField(null=True, blank=True)
     review_created_at = models.DateTimeField(default=now, null=False)
