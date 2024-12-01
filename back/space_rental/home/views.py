@@ -226,7 +226,10 @@ def booking_management(request):
         return redirect('my_page')  # 호스트가 아닌 경우 접근 금지
 
     # SQL 뷰에서 데이터 가져오기
-    bookings = UserBookingView.objects.all()
+
+    user_spaces = Space.objects.filter(user=user).values_list('space_name', flat=True)
+
+    bookings = UserBookingView.objects.filter(space_name__in=user_spaces)
 
     return render(request, 'booking_management.html', {'bookings': bookings})
 
